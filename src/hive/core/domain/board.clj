@@ -5,9 +5,9 @@
 ;;   for dealing with hive board states
 ;;   querying the board and moving pieces about 
 
-(defn origin [] (position/create 0 0))
+(def origin (position/create 0 0))
 
-(defn create [] {:pieces {}})
+(def create {:pieces {}})
 
 (defn place_piece [])
 
