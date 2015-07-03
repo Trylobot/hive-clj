@@ -1,5 +1,8 @@
 (ns hive.core.domain.position)
 
+; position
+;   represents a position (at table-level) of a hive piece or stack of pieces
+
 (def directions_enum [
   "12 o'clock"
   "2 o'clock"
@@ -33,6 +36,6 @@
 (defn adjacencies [position]
   (map #(translation position %) directions_enum))
 
-;; (defn is_equal ...)
-;;   Clojure natively supports comparisons of arbitrary structures
+; (defn is_equal ...)
+;   Clojure natively supports comparisons of arbitrary structures
 
