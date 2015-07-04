@@ -13,9 +13,19 @@
   (let [
     pieces (board :pieces) 
     pieces_at (pieces position)]
-  {:pieces (merge 
-    pieces 
-    {position
-      (if pieces_at
-        (conj pieces_at piece)
-        [piece])} )} ))
+  {:pieces (merge pieces {position (if pieces_at
+    (conj pieces_at piece)
+    [piece])} )} ))
+
+(defn remove_piece [board position]
+  (let [
+    pieces (board :pieces) 
+    pieces_at (pieces position)]
+  (if pieces_at
+    (if (> (count pieces_at) 1)
+      {:pieces (merge pieces {position (pop pieces_at)})}
+      {:pieces (dissoc pieces position)} )
+    board ) ))
+
+;(defn move_piece [board position_0 position_1]
+;  )
