@@ -9,23 +9,16 @@
 
 (def create {:pieces {}})
 
+(defn- purge-empties [pieces]
+  (into {} (filter #(not (empty? (second %))) pieces)) )
+
 (defn place_piece [board piece position]
-  (let [
-    pieces (board :pieces) 
-    pieces_at (pieces position)]
-  {:pieces (merge pieces {position (if pieces_at
-    (conj pieces_at piece)
-    [piece])} )} ))
+  (update-in board [:pieces position] conj piece) )
 
 (defn remove_piece [board position]
-  (let [
-    pieces (board :pieces) 
-    pieces_at (pieces position)]
-  (if pieces_at
-    (if (> (count pieces_at) 1)
-      {:pieces (merge pieces {position (pop pieces_at)})}
-      {:pieces (dissoc pieces position)} )
-    board ) ))
+  (-> board
+    (update-in [:pieces position] pop)
+    (update-in [:pieces] purge-empties) ))
 
 ;(defn move_piece [board position_0 position_1]
 ;  )
