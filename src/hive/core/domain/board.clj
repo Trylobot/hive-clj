@@ -31,17 +31,15 @@
 (defn move_piece [board position_0 position_1]
   (cond
     (and board position_0 position_1)
-      (let [{{piece position_0} :pieces} board]
+      (let [{{stack position_0} :pieces} board, piece (last stack)]
         (-> board
           (remove_piece position_0)
           (place_piece piece position_1) ))
     :else
       board) )
 
-(defn count_pieces [board piece_color piece_type]
-  (reduce 
-    (fn [sum [position stack]] (+ sum (count stack))) ; todo: filtering
-    (:pieces board) ))
+(defn count_pieces [board]
+  (reduce + (map count (vals (:pieces board))) ))
 
 
 

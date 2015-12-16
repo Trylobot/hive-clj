@@ -70,4 +70,15 @@
         {:row -2, :col 0})
       {:pieces {{:row -2, :col 0} [{:color "White", :type "Queen Bee"}]}} )))
 
+  ; count pieces
+  (testing "count_pieces, empty board"
+    (is (=
+      (board/count_pieces board/create)
+      0) ))
+
+  (testing "count_pieces, board with one piece"
+    (is (=
+      (board/count_pieces {:pieces {{:row 0, :col 0} [{:color "White", :type "Queen Bee"}]}})
+      1) ))
+
 )
