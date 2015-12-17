@@ -39,7 +39,7 @@
       board) )
 
 (defn count_pieces [board]
-  (reduce + (map count (vals (:pieces board))) ))
+  (->> board :pieces vals (map count) (reduce +)))
 
 
 
