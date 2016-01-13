@@ -25,6 +25,9 @@
         (contains? types_enum type)]}
     {:color color, :type type})
 
+(defn is? [piece color type]
+    (and (or (nil? color) (= (:color piece) color) )
+         (or (nil? type) (= (:type piece) type) )) )
 
 
 

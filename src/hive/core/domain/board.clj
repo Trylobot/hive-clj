@@ -1,5 +1,6 @@
 (ns hive.core.domain.board)
 (require '[hive.core.domain.position :as position])
+(require '[hive.core.domain.piece :as piece])
 
 ; board
 ;   for dealing with hive board states
@@ -31,15 +32,29 @@
 (defn move_piece [board position_0 position_1]
   (cond
     (and board position_0 position_1)
-      (let [{{stack position_0} :pieces} board, piece (last stack)]
+      (let [
+        {{stack position_0} :pieces} board
+        piece (last stack)]
         (-> board
           (remove_piece position_0)
           (place_piece piece position_1) ))
     :else
       board) )
 
-(defn count_pieces [board]
-  (->> board :pieces vals (map count) (reduce +)))
+(defn count_pieces 
+  ([board]
+    (->> board 
+      :pieces 
+      vals 
+      (map count) 
+      (reduce +)))
+  ([board color_filter type_filter]
+    (->> board 
+      :pieces 
+      vals 
+      (map filter #(piece/is? % color_filter type_filter)) 
+      (map count) 
+      (reduce +))) )
 
 
 
