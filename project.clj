@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [
-    [org.clojure/clojure "1.8.0-alpha5"] ]
+    [org.clojure/clojure "1.8.0-RC5"] ]
   :main ^:skip-aot hive.core.core
   :target-path "target/%s"
   :profiles {

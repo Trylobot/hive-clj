@@ -43,18 +43,20 @@
 
 (defn count_pieces 
   ([board]
-    (->> board 
-      :pieces 
-      vals 
-      (map count) 
+    (->> board
+      :pieces
+      vals
+      (map count)
       (reduce +)))
   ([board color_filter type_filter]
-    (->> board 
-      :pieces 
-      vals 
-      (map filter #(piece/is? % color_filter type_filter)) 
-      (map count) 
-      (reduce +))) )
+    (let [piece_predicate #(piece/is? % color_filter type_filter)
+          filter_pieces #(filter piece_predicate %)]
+      (->> board
+        :pieces
+        vals
+        (map filter_pieces)
+        (map count)
+        (reduce +)) )))
 
 
 

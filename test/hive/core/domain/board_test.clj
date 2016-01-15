@@ -83,27 +83,27 @@
 
   (testing "count_pieces, board with three pieces"
     (is (=
-      (board/count_pieces {:pieces 
-        {{:row 0, :col 0} [{:color "White", :type "Queen Bee"}]}
-        {{:row -2, :col 0} [{:color "Black", :type "Queen Bee"}]}
-        {{:row 2, :col 0} [{:color "White", :type "Soldier Ant"}]} })
+      (board/count_pieces {:pieces { 
+        {:row 0, :col 0} [{:color "White", :type "Queen Bee"}]
+        {:row -2, :col 0} [{:color "Black", :type "Queen Bee"}]
+        {:row 2, :col 0} [{:color "White", :type "Soldier Ant"}] }})
       3) ))
 
   (testing "count_pieces, filtered by color, board with three pieces"
     (is (=
-      (board/count_pieces {:pieces 
-        {{:row 0, :col 0} [{:color "White", :type "Queen Bee"}]}
-        {{:row -2, :col 0} [{:color "Black", :type "Queen Bee"}]}
-        {{:row 2, :col 0} [{:color "White", :type "Soldier Ant"}]} }
+      (board/count_pieces {:pieces { 
+        {:row 0, :col 0} [{:color "White", :type "Queen Bee"}]
+        {:row -2, :col 0} [{:color "Black", :type "Queen Bee"}]
+        {:row 2, :col 0} [{:color "White", :type "Soldier Ant"}] }}
         "White" nil)
       2) ))
 
   (testing "count_pieces, filtered by type, board with three pieces"
     (is (=
-      (board/count_pieces {:pieces 
-        {{:row 0, :col 0} [{:color "White", :type "Queen Bee"}]}
-        {{:row -2, :col 0} [{:color "Black", :type "Queen Bee"}]}
-        {{:row 2, :col 0} [{:color "White", :type "Soldier Ant"}]} }
+      (board/count_pieces {:pieces { 
+        {:row 0, :col 0} [{:color "White", :type "Queen Bee"}]
+        {:row -2, :col 0} [{:color "Black", :type "Queen Bee"}]
+        {:row 2, :col 0} [{:color "White", :type "Soldier Ant"}] }}
         nil "Soldier Ant")
       1) ))
 
