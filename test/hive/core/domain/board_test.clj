@@ -107,4 +107,26 @@
         nil "Soldier Ant")
       1) ))
 
+  (testing "search_pieces, unfiltered, board with two pieces"
+    (is (=
+      (board/search_pieces {:pieces {
+        {:row 0, :col 0} [{:color "White", :type "Queen Bee"}, {:color "Black", :type "Beetle"}]}}
+        nil nil)
+      '({:position {:row 0, :col 0}, :layer 0, :piece {:color "White", :type "Queen Bee"}}
+        {:position {:row 0, :col 0}, :layer 1, :piece {:color "Black", :type "Beetle"}}) )))
+
+  (testing "search_pieces, filtered by color, board with two pieces"
+    (is (=
+      (board/search_pieces {:pieces {
+        {:row 0, :col 0} [{:color "White", :type "Queen Bee"}, {:color "Black", :type "Beetle"}]}}
+        "White" nil)
+      '({:position {:row 0, :col 0}, :layer 0, :piece {:color "White", :type "Queen Bee"}}) )))
+
+  (testing "search_pieces, filtered by type, board with two pieces"
+    (is (=
+      (board/search_pieces {:pieces {
+        {:row 0, :col 0} [{:color "White", :type "Queen Bee"}, {:color "Black", :type "Beetle"}]}}
+        nil "Beetle")
+      '({:position {:row 0, :col 0}, :layer 1, :piece {:color "Black", :type "Beetle"}}) )))
+
 )
