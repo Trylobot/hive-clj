@@ -63,10 +63,23 @@
     :pieces
     (map (fn [board_position]
       (let [position (first board_position)
-            stack (last board_position)]
+            stack (second board_position)]
         (map-indexed (fn [index piece]
           {:position position, :layer index, :piece piece})
           stack) )))
     first ; <-- TODO: remove extra sequence wrapping data here
     (filter #(piece/is? (:piece %) color_filter type_filter)) ))
+
+(defn search_top_pieces [board color_filter type_filter]
+  (->> board
+    :pieces
+    (map (fn [board_position]
+      (let [position (first board_position)
+            stack (second board_position)]
+        {:position position, :layer (->> stack count dec), :piece (last stack) }) ))
+    (filter #(piece/is? (:piece %) color_filter type_filter)) ))
+
+
+
+
 
