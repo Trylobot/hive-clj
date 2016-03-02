@@ -1,13 +1,15 @@
 board model ideas
+---
 
 version 1: original, javascript format
     - map containing key "pieces", which is a map of "position-string" to "stack of piece objects"
     - {"pieces":{"0,0":[{"color":"White","type":"Beetle"},{"color":"Black","type":"Queen Bee"}]}}
 
-version 2: clojure derivative of version 1 wherein position keys are represented as maps instead of strings
-    - {:pieces {{:row 0, :col 0} [{:color "White", :type "Beetle"} {:color "Black", :type "Queen Bee"}]}}
+version 2: clojure derivative of version 1 
+    - position keys are represented as structures instead of strings, and keywords are used as enum values instead of strings
+    - {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}
 
-version 3: minified derivative of version 2
+version 3: compressed derivative of version 2
     - map of tuple to sequence of tuples; key tuple is the position vector, value sequence is the stack of piece tuples
         - position tuple description: "row", "col"
         - piece tuple description: "color", "type"
@@ -18,8 +20,10 @@ version 4: restructured completely; sequence of stacks ordered as a spiral
     - sequence indices map to board positions in the shape of an anti-clockwise spiral originating at 0,0
     - [nil [[:white :beetle] [:black :queen-bee]]]
 
-version 5: restructured completely again
+version 5: restructured completely, again
     - map of occupied position tuples to piece object occupying that position
         - position tuple description: "row", "col", "layer"
         - piece tuple description: "color", "type"
     - {[0 0 0] [:white :queen-bee], [0 0 1] [:black :beetle]}
+
+
