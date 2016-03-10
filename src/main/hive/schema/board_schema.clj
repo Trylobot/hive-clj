@@ -30,12 +30,12 @@
     "10 o'clock" ))
 
 (def v1-serialized-position "intermediate type; enum for serialized positions"
-  #"\d+,\d+")
+  (s/pred #(re-matches #"\d+,\d+" %)))
 
 (def v1 "board version 1; schema for board model compatible with original, javascript format"
-  {"pieces" {
-    v1-serialized-position [
-      {"color" v1-piece-color, "type" v1-piece-type} ]} })
+  {(s/required-key "pieces") (s/maybe {
+    (s/optional-key v1-serialized-position) [
+      {(s/required-key"color") v1-piece-color, (s/required-key "type") v1-piece-type} ] })} )
 ; {"pieces":{"0,0":[{"color":"White","type":"Beetle"},{"color":"Black","type":"Queen Bee"}]}}
 
 ; ---------------------

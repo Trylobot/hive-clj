@@ -10,6 +10,7 @@ version 2: clojure derivative of version 1
     - {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}
 
 version 3: compressed derivative of version 2
+    - drop useless "pieces" property (there is no other useful data contained in a board, except the collection of its pieces)
     - map of tuple to sequence of tuples; key tuple is the position vector, value sequence is the stack of piece tuples
         - position tuple description: "row", "col"
         - piece tuple description: "color", "type"
