@@ -79,7 +79,8 @@
         {:position position, :layer (->> stack count dec), :piece (last stack) }) ))
     (filter #(piece/is? (:piece %) color_filter type_filter)) ))
 
-
+(defn lookup_occupied_positions [board]
+  nil )
 
 
 

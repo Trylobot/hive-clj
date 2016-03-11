@@ -68,43 +68,17 @@
 (def v2 "board version 2; clojure derivative of version 1; position-keys are structures, and keywords where possible"
   {:pieces (s/maybe {
     {:row s/Int, :col s/Int} [
-      {:color v2-piece-color, :type v2-piece-type} ]}) })
+      {:color v2-piece-color, :type v2-piece-type} ] })} )
 ; {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}
 
-(def v3 "board version 3; compressed derivative of version 2"
-  [[s/Num s/Num] [
-    [s/Keyword s/Keyword] ]])
-; [[0 0] [[:white :beetle] [:black :queen-bee]]]
+(defn convert-v1-to-v2 [v1-board]
+  nil )
 
-(def v4 "board version 4; sequence of piece-stacks packed into a nil-padded spiral"
-  [(s/maybe [[s/Keyword s/Keyword]])] )
-; [nil [[:white :beetle] [:black :queen-bee]]]
+; ---------------------
 
-(def v5 "board version 5; sequence of pieces with 3D position vectors"
-  {[s/Num s/Num s/Num] [s/Keyword s/Keyword]})
-; {[0 0 0] [:white :queen-bee], [0 0 1] [:black :beetle]}
+;(def v3 "board version 3; compressed derivative of version 2"
+;  (s/maybe [[s/Int s/Int] [
+;    [v2-piece-color v2-piece-type] ]]) )
+;; [[0 0] [[:white :beetle] [:black :queen-bee]]]
 
-  ; {:a {:b s/Str
-  ;      :c s/Int}
-  ;  :d [{:e s/Keyword
-  ;       :f [s/Num]}]})
-
-; (s/validate
-;   Data
-;   {:a {:b "abc"
-;        :c 123}
-;    :d [{:e :bc
-;         :f [12.2 13 100]}
-;        {:e :bc
-;         :f [-1]}]})
-;; Success!
-
-; (s/validate
-;   Data
-;   {:a {:b 123
-;        :c "ABC"}})
-;; Exception -- Value does not match schema:
-;;  {:a {:b (not (instance? java.lang.String 123)),
-;;       :c (not (integer? "ABC"))},
-;;   :d missing-required-key}
 
