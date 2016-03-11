@@ -1,4 +1,4 @@
-(ns hive.schema.board-schema)
+(ns hive.core.schema.board-schema)
 (require '[clojure.string :as string])
 (require '[schema.core :as s])
 (require '[hive.core.domain.piece :as piece])
@@ -34,18 +34,18 @@
 
 (def v1 "board version 1; schema for board model compatible with original, javascript format"
   {(s/required-key "pieces") (s/maybe {
-    (s/optional-key v1-serialized-position) [
-      {(s/required-key"color") v1-piece-color, (s/required-key "type") v1-piece-type} ] })} )
+    v1-serialized-position [
+      {(s/required-key "color") v1-piece-color, (s/required-key "type") v1-piece-type} ] })} )
 ; {"pieces":{"0,0":[{"color":"White","type":"Beetle"},{"color":"Black","type":"Queen Bee"}]}}
 
 ; ---------------------
 
-(def v2-piece-colors "intermediate type; enum for hive piece colors, as keywords"
+(def v2-piece-color "intermediate type; enum for hive piece colors, as keywords"
   (s/enum 
     :white
     :black ))
 
-(def v2-piece-types "intermediate type; enum for hive piece colors, as keywords"
+(def v2-piece-type "intermediate type; enum for hive piece colors, as keywords"
   (s/enum
     :queen-bee
     :beetle
@@ -56,7 +56,7 @@
     :ladybug
     :pillbug ))
 
-(def v2-position-directions "intermediate type; enum for hive piece relative angles, as integers (degrees clockwise of north)"
+(def v2-position-direction "intermediate type; enum for hive piece relative angles, as integers (degrees clockwise of north)"
   (s/enum
     0
     60
@@ -65,13 +65,10 @@
     240
     300 ))
 
-(def v2-piece-colors "intermediate type; enum for hive piece colors, as keywords"
-  (apply s/enum (map #(-> % string/lower-case (string/replace " " "-")) piece/colors_enum)))
-
 (def v2 "board version 2; clojure derivative of version 1; position-keys are structures, and keywords where possible"
-  {:pieces {
-    {:row s/Num, :col s/Num} [
-      {:color s/Keyword, :type s/Keyword} ]} })
+  {:pieces (s/maybe {
+    {:row s/Int, :col s/Int} [
+      {:color v2-piece-color, :type v2-piece-type} ]}) })
 ; {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}
 
 (def v3 "board version 3; compressed derivative of version 2"
