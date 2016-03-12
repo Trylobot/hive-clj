@@ -94,4 +94,87 @@
       :contents (lookup-piece-stack board adjacent-position)
     })) position/directions-enum) ))
 
+; keys in this lookup table are specified as follows:
+;   - keys have one character for each of six directions
+;   - the sequence begins with 12 o'clock and proceeds clockwise
+;   - the characters represent the contents of the position
+;       one unit of distance away from an origin piece in the associated direction
+;   - the character will be "1" if that direction is occupied
+;   - the character will be "." if that direction is NOT occupied
+; values in this lookup table correspond to the keys as follows:
+;   - values have one character for each of six directions
+;   - the character will be "1" if that direction is valid to slide into, given the occupied adjacencies
+;   - the character will be "." if that direction is NOT valid to slide into, given the occupied adjacencies
+; TODO: there must be a function that describes this data more compactly
+(def can-slide-lookup-table {
+  "......" "......" ; island cannot move
+  ".....1" "1...1." ; slide around single piece
+  "....1." "...1.1" ; slide around single piece
+  "....11" "1..1.." ; slide alongside pair of adjacent pieces
+  "...1.." "..1.1." ; slide around single piece
+  "...1.1" "1.1..." ; slide up and out of crater
+  "...11." "..1..1" ; slide alongside pair of adjacent pieces
+  "...111" "1.1..." ; slide up and out of crater
+  "..1..." ".1.1.." ; slide around single piece
+  "..1..1" "11.11." ; slide between friends
+  "..1.1." ".1...1" ; slide up and out of crater
+  "..1.11" "11...." ; slide out of corner
+  "..11.." ".1..1." ; slide alongside pair of adjacent pieces
+  "..11.1" "11...." ; slide out of corner
+  "..111." ".1...1" ; slide up and out of crater
+  "..1111" "11...." ; slide to escape from pit
+  ".1...." "1.1..." ; slide around single piece
+  ".1...1" "..1.1." ; slide up and out of crater
+  ".1..1." "1.11.1" ; slide between friends
+  ".1..11" "..11.." ; slide out of corner
+  ".1.1.." "1...1." ; slide up and out of crater
+  ".1.1.1" "......" ; nearly-surrounded piece cannot move
+  ".1.11." "1....1" ; slide out of corner
+  ".1.111" "......" ; nearly-surrounded piece cannot move
+  ".11..." "1..1.." ; slide alongside pair of adjacent pieces
+  ".11..1" "...11." ; slide out of corner
+  ".11.1." "1....1" ; slide out of corner
+  ".11.11" "......" ; nearly-surrounded piece cannot move
+  ".111.." "1...1." ; slide up and out of crater
+  ".111.1" "......" ; nearly-surrounded piece cannot move
+  ".1111." "1....1" ; slide to escape from pit
+  ".11111" "......" ; nearly-surrounded piece cannot move
+  "1....." ".1...1" ; slide around single piece
+  "1....1" ".1..1." ; slide alongside pair of adjacent pieces
+  "1...1." ".1.1.." ; slide up and out of crater
+  "1...11" ".1.1.." ; slide up and out of crater
+  "1..1.." ".11.11" ; slide between friends
+  "1..1.1" ".11..." ; slide out of corner
+  "1..11." ".11..." ; slide out of corner
+  "1..111" ".11..." ; slide to escape from pit
+  "1.1..." "...1.1" ; slide up and out of crater
+  "1.1..1" "...11." ; slide out of corner
+  "1.1.1." "......" ; nearly-surrounded piece cannot move
+  "1.1.11" "......" ; nearly-surrounded piece cannot move
+  "1.11.." "....11" ; slide out of corner
+  "1.11.1" "......" ; nearly-surrounded piece cannot move
+  "1.111." "......" ; nearly-surrounded piece cannot move
+  "1.1111" "......" ; nearly-surrounded piece cannot move
+  "11...." "..1..1" ; slide alongside pair of adjacent pieces
+  "11...1" "..1.1." ; slide up and out of crater
+  "11..1." "..11.." ; slide out of corner
+  "11..11" "..11.." ; slide to escape from pit
+  "11.1.." "....11" ; slide out of corner
+  "11.1.1" "......" ; nearly-surrounded piece cannot move
+  "11.11." "......" ; nearly-surrounded piece cannot move
+  "11.111" "......" ; nearly-surrounded piece cannot move
+  "111..." "...1.1" ; slide up and out of crater
+  "111..1" "...11." ; slide to escape from pit
+  "111.1." "......" ; nearly-surrounded piece cannot move
+  "111.11" "......" ; nearly-surrounded piece cannot move
+  "1111.." "....11" ; slide to escape from pit
+  "1111.1" "......" ; nearly-surrounded piece cannot move
+  "11111." "......" ; nearly-surrounded piece cannot move
+  "111111" "......" ; completely surrounded piece cannot move
+})
+
+;(defn lookup-adjacent-slide-positions [board position]
+;   )
+
+
 
