@@ -1,4 +1,4 @@
-(ns hive.core.schema.board-schema-test)
+(ns hive.test.schema.board-schema-test)
 (require '[clojure.test :refer [deftest testing is]])
 (require '[schema.core :as s])
 (require '[hive.core.schema.board-schema :as board-schema])
@@ -26,7 +26,14 @@
   ; conversions
   (testing "upgrade, v1 --> v2"
     (is (= 
+      {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}
       (board-schema/upgrade-v1-to-v2 
-        {"pieces" {"0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]}} )
-      {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}} )))
+        {"pieces" {"0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]}} ) )))
+
+  (testing "revert, v2 --> v1"
+    (is (= 
+      {"pieces" {"0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]}}
+      (board-schema/revert-v2-to-v1 
+        {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}} ) )))
+
 )

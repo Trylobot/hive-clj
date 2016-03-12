@@ -6,9 +6,9 @@
   :dependencies [
     [org.clojure/clojure "1.8.0"]
     [prismatic/schema "1.0.5"]]
-  :source-paths ["src/main"]
-  :test-paths ["src/test"]
-  :main ^:skip-aot hive.core.core
+  :source-paths ["src"]
+  :test-paths ["src/hive/test"]
+  :main ^:skip-aot hive.main
   :target-path "target/%s"
   :profiles {
     :uberjar {:aot :all}

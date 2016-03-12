@@ -39,8 +39,12 @@
 
 ; ---------------------
 
-(defn upgrade-v1-to-v2 [v1-piece] {
-  :color (keyword (str/lower-case (v1-piece "color")))
-  :type (keyword (str/replace (str/lower-case (v1-piece "type")) " " "-")) })
+(defn upgrade-v1-to-v2 [v1-piece]
+  (piece/create
+    (-> (get v1-piece "color") str/lower-case keyword)
+    (-> (get v1-piece "type") str/lower-case (str/replace " " "-") keyword) ))
 
+(defn revert-v2-to-v1 [v2-piece] {
+  "color" (-> (:color v2-piece) name str/capitalize)
+  "type" (as-> (:type v2-piece) t (name t) (str/split t #"-") (map str/capitalize t) (str/join " " t)) })
 

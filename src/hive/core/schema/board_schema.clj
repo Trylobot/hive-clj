@@ -27,10 +27,16 @@
       :type piece-schema/v2-piece-type}] })} )
 
 (defn upgrade-v1-to-v2 [v1-board]
-  (let [pieces (v1-board "pieces")] 
+  (let [pieces (get v1-board "pieces")] 
     {:pieces (zipmap
       (map position-schema/upgrade-v1-to-v2 (keys pieces))
-      (map piece-schema/upgrade-v1-to-v2 (vals pieces)))} ))
+      (map #(mapv piece-schema/upgrade-v1-to-v2 %) (vals pieces)))} ))
+
+(defn revert-v2-to-v1 [v2-board]
+  (let [pieces (:pieces v2-board)]
+    {"pieces" (zipmap
+      (map position-schema/revert-v2-to-v1 (keys pieces))
+      (map #(mapv piece-schema/revert-v2-to-v1 %) (vals pieces)))} ))
 
 ; ---------------------
 
