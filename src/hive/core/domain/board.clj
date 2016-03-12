@@ -10,38 +10,38 @@
 
 (def create {:pieces {}})
 
-(defn- purge_empties [pieces]
+(defn- purge-empties [pieces]
   (into {} (filter #(not (empty? (second %))) pieces)) )
 
-(defn place_piece [board piece position]
+(defn place-piece [board piece position]
   (cond
     (and board piece position)
       (update-in board [:pieces position] conj piece)
     :else
       board) )
 
-(defn remove_piece [board position]
+(defn remove-piece [board position]
   (cond
     (and board position)
       (-> board
         (update-in [:pieces position] pop)
-        (update-in [:pieces] purge_empties) )
+        (update-in [:pieces] purge-empties) )
     :else
       board) )
 
-(defn move_piece [board position_0 position_1]
+(defn move-piece [board position_0 position_1]
   (cond
     (and board position_0 position_1)
       (let [
         {{stack position_0} :pieces} board
         piece (last stack)]
         (-> board
-          (remove_piece position_0)
-          (place_piece piece position_1) ))
+          (remove-piece position_0)
+          (place-piece piece position_1) ))
     :else
       board) )
 
-(defn count_pieces 
+(defn count-pieces 
   ([board]
     (->> board
       :pieces
@@ -58,7 +58,7 @@
         (map count)
         (reduce +)) )))
 
-(defn search_pieces [board color_filter type_filter]
+(defn search-pieces [board color_filter type_filter]
   (->> board
     :pieces
     (map (fn [board_position]
@@ -70,7 +70,7 @@
     first ; <-- TODO: remove extra sequence wrapping data here
     (filter #(piece/is? (:piece %) color_filter type_filter)) ))
 
-(defn search_top_pieces [board color_filter type_filter]
+(defn search-top-pieces [board color_filter type_filter]
   (->> board
     :pieces
     (map (fn [board_position]
@@ -79,7 +79,7 @@
         {:position position, :layer (->> stack count dec), :piece (last stack) }) ))
     (filter #(piece/is? (:piece %) color_filter type_filter)) ))
 
-(defn lookup_occupied_positions [board]
+(defn lookup-occupied-positions [board]
   nil )
 
 
