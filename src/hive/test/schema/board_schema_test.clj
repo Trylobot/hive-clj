@@ -10,18 +10,30 @@
     (is (s/validate board-schema/v1
       {"pieces" nil} )))
 
-  (testing "v1, typical early board"
+  (testing "v1, tiny board"
     (is (s/validate board-schema/v1
       {"pieces" {"0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]}} )))
+
+  (testing "v1, small board"
+    (is (s/validate board-schema/v1
+      {"pieces" {
+        "0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]
+        "2,0" [{"color" "White","type" "Grasshopper"}] }} )))
 
   ; v2
   (testing "v2, default value"
     (is (s/validate board-schema/v2
       {:pieces nil} )))
 
-  (testing "v2, typical early board"
+  (testing "v2, tiny board"
     (is (s/validate board-schema/v2
       {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}} )))
+
+  (testing "v2, small board"
+    (is (s/validate board-schema/v2
+      {:pieces {
+        {:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]
+        {:row 2, :col 0} [{:color :white, :type :beetle}] }} )))
 
   ; conversions
   (testing "upgrade, v1 --> v2"
