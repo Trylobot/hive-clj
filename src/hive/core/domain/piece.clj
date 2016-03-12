@@ -3,11 +3,11 @@
 ; piece
 ;   represents a single hive piece
 
-(def colors_enum #{
+(def colors-enum #{
   :white
   :black })
 
-(def types_enum #{
+(def types-enum #{
   :queen-bee
   :beetle
   :grasshopper
@@ -19,13 +19,13 @@
 
 (defn create [color type]
   {:pre [
-    (contains? colors_enum color)
-    (contains? types_enum type)]}
+    (contains? colors-enum color)
+    (contains? types-enum type)]}
   {:color color, :type type})
 
 (defn is? [piece color type]
   (and (or (nil? color) (= (:color piece) color) )
-     (or (nil? type) (= (:type piece) type) )) )
+       (or (nil? type)  (= (:type  piece) type)  )) )
 
 
 

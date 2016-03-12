@@ -29,58 +29,69 @@
     :else
       board) )
 
-(defn move-piece [board position_0 position_1]
+(defn move-piece [board position-0 position-1]
   (cond
-    (and board position_0 position_1)
+    (and board position-0 position-1)
       (let [
-        {{stack position_0} :pieces} board
+        {{stack position-0} :pieces} board
         piece (last stack)]
         (-> board
-          (remove-piece position_0)
-          (place-piece piece position_1) ))
+          (remove-piece position-0)
+          (place-piece piece position-1) ))
     :else
       board) )
 
 (defn count-pieces 
   ([board]
-    (->> board
-      :pieces
-      vals
-      (map count)
-      (reduce +)))
-  ([board color_filter type_filter]
-    (let [piece_predicate #(piece/is? % color_filter type_filter)
-          filter_pieces #(filter piece_predicate %)]
-      (->> board
-        :pieces
-        vals
-        (map filter_pieces)
-        (map count)
-        (reduce +)) )))
+    (->> board :pieces vals (map count) (reduce +)))
+  ([board color-filter type-filter]
+    (let [piece-predicate #(piece/is? % color-filter type-filter)
+          filter-pieces #(filter piece-predicate %)]
+      (->> board :pieces vals (map filter-pieces) (map count) (reduce +)) )))
 
-(defn search-pieces [board color_filter type_filter]
+(defn search-pieces [board color-filter type-filter]
   (->> board
     :pieces
-    (map (fn [board_position]
-      (let [position (first board_position)
-            stack (second board_position)]
+    (map (fn [board-position]
+      (let [position (first board-position)
+            stack (second board-position)]
         (map-indexed (fn [index piece]
           {:position position, :layer index, :piece piece})
           stack) )))
-    first ; <-- TODO: remove extra sequence wrapping data here
-    (filter #(piece/is? (:piece %) color_filter type_filter)) ))
+    first
+    (filter #(piece/is? (:piece %) color-filter type-filter)) ))
 
-(defn search-top-pieces [board color_filter type_filter]
+(defn search-top-pieces [board color-filter type-filter]
   (->> board
     :pieces
-    (map (fn [board_position]
-      (let [position (first board_position)
-            stack (second board_position)]
+    (map (fn [board-position]
+      (let [position (first board-position)
+            stack (second board-position)]
         {:position position, :layer (->> stack count dec), :piece (last stack) }) ))
-    (filter #(piece/is? (:piece %) color_filter type_filter)) ))
+    (filter #(piece/is? (:piece %) color-filter type-filter)) ))
 
 (defn lookup-occupied-positions [board]
-  nil )
+  (keys (:pieces board)) )
 
+(defn lookup-piece-stack [board position]
+  (position (:pieces board)) )
+
+(defn lookup-piece-stack-height [board position]
+  (count (lookup-piece-stack board position)) )
+
+(defn lookup-piece [board position]
+  (last (lookup-piece-stack board position)) )
+
+(defn lookup-piece-at-height [board position height]
+  ((lookup-piece-stack board position) height) )
+
+(defn lookup-adjacent-positions [board position]
+  (zipmap
+    position/directions-enum
+    (map #((let [adjacent-position (position/translation %)] {
+      :direction %
+      :position adjacent-position
+      :contents (lookup-piece-stack board adjacent-position)
+    })) position/directions-enum) ))
 
 
