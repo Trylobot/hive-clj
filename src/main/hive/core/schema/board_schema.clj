@@ -1,78 +1,36 @@
 (ns hive.core.schema.board-schema)
-(require '[clojure.string :as string])
+(require '[clojure.string :as str])
 (require '[schema.core :as s])
+
 (require '[hive.core.domain.piece :as piece])
+(require '[hive.core.domain.position :as position])
 (require '[hive.core.domain.board :as board])
 
-(def v1-piece-color "intermediate type; enum for hive piece colors, as strings"
-  (s/enum 
-    "White"
-    "Black" ))
+(require '[hive.core.schema.piece-schema :as piece-schema])
+(require '[hive.core.schema.position-schema :as position-schema])
 
-(def v1-piece-type "intermediate type; enum for hive piece colors, as strings"
-  (s/enum
-    "Queen Bee"
-    "Beetle"
-    "Grasshopper"
-    "Spider"
-    "Soldier Ant"
-    "Mosquito"
-    "Ladybug"
-    "Pillbug" ))
 
-(def v1-position-direction "intermediate type; enum for hive piece relative angles, as strings"
-  (s/enum
-    "12 o'clock"
-    "2 o'clock"
-    "4 o'clock"
-    "6 o'clock"
-    "8 o'clock"
-    "10 o'clock" ))
-
-(def v1-serialized-position "intermediate type; enum for serialized positions"
-  (s/pred #(re-matches #"\d+,\d+" %)))
-
+; {"pieces":{"0,0":[{"color":"White","type":"Beetle"},{"color":"Black","type":"Queen Bee"}]}}
 (def v1 "board version 1; schema for board model compatible with original, javascript format"
   {(s/required-key "pieces") (s/maybe {
-    v1-serialized-position [
-      {(s/required-key "color") v1-piece-color, (s/required-key "type") v1-piece-type} ] })} )
-; {"pieces":{"0,0":[{"color":"White","type":"Beetle"},{"color":"Black","type":"Queen Bee"}]}}
+    position-schema/v1-serialized-position [{
+      (s/required-key "color") piece-schema/v1-piece-color, 
+      (s/required-key "type") piece-schema/v1-piece-type }] })} )
 
 ; ---------------------
 
-(def v2-piece-color "intermediate type; enum for hive piece colors, as keywords"
-  (s/enum 
-    :white
-    :black ))
-
-(def v2-piece-type "intermediate type; enum for hive piece colors, as keywords"
-  (s/enum
-    :queen-bee
-    :beetle
-    :grasshopper
-    :spider
-    :soldier-ant
-    :mosquito
-    :ladybug
-    :pillbug ))
-
-(def v2-position-direction "intermediate type; enum for hive piece relative angles, as integers (degrees clockwise of north)"
-  (s/enum
-    0
-    60
-    120
-    180
-    240
-    300 ))
-
+; {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}
 (def v2 "board version 2; clojure derivative of version 1; position-keys are structures, and keywords where possible"
   {:pieces (s/maybe {
-    {:row s/Int, :col s/Int} [
-      {:color v2-piece-color, :type v2-piece-type} ] })} )
-; {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}
+    {:row s/Int, :col s/Int} [{
+      :color piece-schema/v2-piece-color, 
+      :type piece-schema/v2-piece-type}] })} )
 
-(defn convert-v1-to-v2 [v1-board]
-  nil )
+(defn upgrade-v1-to-v2 [v1-board]
+  (let [pieces (v1-board "pieces")] 
+    {:pieces (zipmap
+      (map position-schema/upgrade-v1-to-v2 (keys pieces))
+      (map piece-schema/upgrade-v1-to-v2 (vals pieces)))} ))
 
 ; ---------------------
 

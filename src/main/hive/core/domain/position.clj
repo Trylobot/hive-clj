@@ -14,16 +14,10 @@
 })
 
 (defn create [row col]
+  {:pre [(or 
+    (and (even? row) (even? col)) 
+    (and (odd? row) (odd? col)) )]}
   {:row row, :col col})
-
-(defn copy [position]
-  (create (position :row) (position :col)))
-
-(defn encode [position]
-  (str/join [(position :row) "," (position :col)]))
-
-(defn decode [position_str]
-  (apply create (map #(Long. %) (str/split position_str #","))))
 
 (defn translation [position direction]
   (case direction

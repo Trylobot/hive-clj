@@ -22,4 +22,11 @@
   (testing "v2, typical early board"
     (is (s/validate board-schema/v2
       {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}} )))
+
+  ; conversions
+  (testing "upgrade, v1 --> v2"
+    (is (= 
+      (board-schema/upgrade-v1-to-v2 
+        {"pieces" {"0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]}} )
+      {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}} )))
 )
