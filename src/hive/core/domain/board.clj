@@ -16,7 +16,7 @@
   [pieces]
     (into {} (filter #(not (empty? (second %))) pieces)) )
 
-(defn place-piece "add a piece to the top of a stack at position"
+(defn place-piece "place a piece on the top of a stack at position"
   [board piece position]
     (cond
       (and board piece position)
@@ -24,83 +24,103 @@
       :else
         board) )
 
-(defn remove-piece [board position]
-  (cond
-    (and board position)
-      (-> board
-        (update-in [:pieces position] pop)
-        (update-in [:pieces] purge-empties) )
-    :else
-      board) )
-
-(defn move-piece [board position-0 position-1]
-  (cond
-    (and board position-0 position-1)
-      (let [
-        {{stack position-0} :pieces} board
-        piece (last stack)]
+(defn remove-piece "remove the piece at the top of the stack at position" 
+  [board position]
+    (cond
+      (and board position)
         (-> board
-          (remove-piece position-0)
-          (place-piece piece position-1) ))
-    :else
-      board) )
+          (update-in [:pieces position] pop)
+          (update-in [:pieces] purge-empties) )
+      :else
+        board) )
 
-(defn count-pieces 
+(defn move-piece "remove piece from board at position-0 and place it at position-1"
+  [board position-0 position-1]
+    (cond
+      (and board position-0 position-1)
+        (let [
+          {{stack position-0} :pieces} board
+          piece (last stack)]
+          (-> board
+            (remove-piece position-0)
+            (place-piece piece position-1) ))
+      :else
+        board) )
+
+(defn count-pieces "count number of pieces on the board, with optional filtering by color and/or type"
   ([board]
     (->> board :pieces vals (map count) (reduce +)))
   ([board color-filter type-filter]
-    (let [piece-predicate #(piece/is? % color-filter type-filter)
+    (let [piece-predicate #(piece/like? % color-filter type-filter)
           filter-pieces #(filter piece-predicate %)]
       (->> board :pieces vals (map filter-pieces) (map count) (reduce +)) )))
 
-(defn search-pieces [board color-filter type-filter]
-  (->> board
-    :pieces
-    (map (fn [board-position]
-      (let [position (first board-position)
-            stack (second board-position)]
-        (map-indexed (fn [index piece]
-          {:position position, :layer index, :piece piece})
-          stack) )))
-    first
-    (filter #(piece/is? (:piece %) color-filter type-filter)) ))
+(defn search-pieces "search all pieces on the board, filtering by color and/or type"
+  [{pieces :pieces} color-filter type-filter]
+    (->> pieces
+      (map (fn [board-position]
+        (let [position (first board-position)
+              stack (second board-position)]
+          (map-indexed (fn [index piece]
+            {:position position, :layer index, :piece piece})
+            stack) )))
+      first
+      (filter #(piece/like? (:piece %) color-filter type-filter)) ))
 
-(defn search-top-pieces [board color-filter type-filter]
-  (->> board
-    :pieces
-    (map (fn [board-position]
-      (let [position (first board-position)
-            stack (second board-position)]
-        {:position position, :layer (->> stack count dec), :piece (last stack) }) ))
-    (filter #(piece/is? (:piece %) color-filter type-filter)) ))
+(defn search-top-pieces "search only the top pieces of each stack on the board, filtering by color and/or type"
+  [{pieces :pieces} color-filter type-filter]
+    (->> pieces
+      (map (fn [board-position]
+        (let [position (first board-position)
+              stack (second board-position)]
+          {:position position, :layer (->> stack count dec), :piece (last stack) }) ))
+      (filter #(piece/like? (:piece %) color-filter type-filter)) ))
 
-(defn lookup-occupied-positions [board]
-  (keys (:pieces board)) )
+(defn lookup-occupied-positions "return all positions on the board having 1 or more piece"
+  [{pieces :pieces}]
+    (filter #(> (count (get pieces %)) 0) (keys pieces)) )
 
-(defn lookup-piece-stack [board position]
-  (position (:pieces board)) )
+(defn lookup-piece-stack "return the stack of pieces at position"
+  [{pieces :pieces} position]
+    (get pieces position) )
 
-(defn lookup-piece-stack-height [board position]
-  (count (lookup-piece-stack board position)) )
+(defn lookup-piece-stack-height "get the number of pieces at position"
+  [board position]
+    (count (lookup-piece-stack board position)) )
 
-(defn lookup-piece [board position]
-  (last (lookup-piece-stack board position)) )
+(defn lookup-piece "get the visible (top) piece at the stack specified by position"
+  [board position]
+    (last (lookup-piece-stack board position)) )
 
-(defn lookup-piece-at-height [board position height]
-  ((lookup-piece-stack board position) height) )
+(defn lookup-piece-at-height "get the piece at position residing at height in the stack, or nil"
+  [board position height]
+    (let [stack-height (lookup-piece-stack-height board position)]
+      (if (and (>= stack-height 0) (< stack-height height))
+        (nth (lookup-piece-stack board position) height)
+        nil) ))
 
-(defn lookup-adjacent-positions [board position]
-  (zipmap
-    position/directions-vector
-    (map #((let [adjacent-position (position/translation %)] {
-      :direction %
-      :position adjacent-position
-      :contents (lookup-piece-stack board adjacent-position)
-    })) position/directions-vector) ))
+(defn lookup-adjacent-positions "create a list of adjacency descriptors for a position"
+  [board position]
+    (zipmap
+      position/direction-vectors
+      (map #((let [adjacent-position (position/translation %)] {
+        :direction %
+        :position adjacent-position
+        :contents (lookup-piece-stack board adjacent-position)
+      })) position/direction-vectors) ))
+
+; TODO: unify this with lookup-adjacent-positions, it could easily do both things
+(defn lookup-adjacent-piece-stack-heights "create a list of height descriptors for a position"
+  [board position]
+    (zipmap
+      position/direction-vectors
+      (map #(let [translated-position (position/translation position %)] {
+        :position translated-position
+        :height (lookup-piece-stack-height board translated-position) }) position/direction-vectors)) )
 
 ; keys in this lookup table are specified as follows:
 ;   - keys have one character for each of six directions
-;   - character order corresponds to position/directions-vector
+;   - character order corresponds to position/direction-vectors
 ;   - the sequence begins with 12 o'clock and proceeds clockwise
 ;   - the characters represent the contents of the position
 ;       one unit of distance away from an origin piece in the associated direction
@@ -189,38 +209,37 @@
   "111111" "......" ; completely surrounded piece cannot move
 })
 
-(defn encode-slide-lookup-key-from-adjacencies [position-adjacencies]
-  (apply str (map #(if (nil? (:contents %)) \. \1 ) position-adjacencies) ))
+(defn encode-slide-lookup-key-from-adjacencies "transform a list of adjacency descriptors into a can-slide table lookup key"
+  [position-adjacencies]
+    (apply str (map #(if (nil? (:contents %)) \. \1 ) position-adjacencies) ))
 
-; position/directions-vector
-(defn render-valid-positions-from-slide-lookup-val [slide-lookup-val origin-position]
-  (->> (map-indexed 
-    (fn [idx dir] (let [is-valid (= \1 (nth slide-lookup-val idx))] 
-      [dir is-valid] )) position/directions-vector)
-    (filter #(second %))
-    (map #(position/translation origin-position (first %))) ))
-
-(defn pretend-position-is-empty [position-adjacencies empty-position]
-  (map #(if (= (:position %) empty-position) 
-    (update-in % [:contents] nil) 
-    %) position-adjacencies) )
+; position/direction-vectors
+; TODO: destructure for cleanliness and further brevity; i.e., filter direction-vectors in a single step, creating no extra structures
+(defn render-valid-positions-from-slide-lookup-val "transform a can-slide table lookup value into a filtered list of positions"
+  [slide-lookup-val origin-position]
+    (->> (map-indexed 
+      (fn [idx dir] (let [is-valid (= \1 (nth slide-lookup-val idx))] 
+        [dir is-valid] )) position/direction-vectors)
+      (filter #(second %))
+      (map #(position/translation origin-position (first %))) ))
 
 ; assumes, for the given position, that the piece being moved (from position)
 ;   is already "in hand" (i.e., does not appear on the board)
-(defn lookup-adjacent-slide-positions [board position]
-  (-> (lookup-adjacent-positions board position)
-    encode-slide-lookup-key-from-adjacencies
-    can-slide-lookup-table
-    (render-valid-positions-from-slide-lookup-val position) ))
+(defn lookup-adjacent-slide-positions "return a list of positions into which a piece at the given position could slide"
+  [board position]
+    (-> (lookup-adjacent-positions board position)
+      encode-slide-lookup-key-from-adjacencies
+      can-slide-lookup-table
+      (render-valid-positions-from-slide-lookup-val position) ))
 
 ; assumes, for the given position, that the piece being moved (from position)
 ;   is already "in hand" (i.e., does not appear on the board)
-(defn lookup-adjacent-climb-positions [board position]
-  (let [
-    height (lookup-piece-stack-height board position)
-    adjacent-heights (zipmap position/directions-vector
-      (map #(lookup-piece-stack-height board %) position/directions-vector))]
-    nil ))
+(defn lookup-adjacent-climb-positions "return a list of positions onto which a piece at the given position could climb"
+  [board position]
+    (let [
+      height (lookup-piece-stack-height board position)
+      adjacent-heights (lookup-adjacent-piece-stack-heights board position)]
+      (map (fn [dir] nil) position/direction-vectors) ))
 
 ; OBSERVATION 1: "climb" implements a functional definition of the concept of
 ;   being "blocked" by a "gate" while trying to move from one position to another
@@ -228,11 +247,15 @@
 ; OBSERVATION 2: "slide" is a special case of "climb"
 ;   where stack-height of origin and destination positions must both be 0
 
-; examine all occupied positions of a board, and compile simple movement meta information
-;(defn board-movement-meta [board]
-;  (let [positions (keys (:pieces board))]
-;    {:meta {:positions
-;      (zipmap positions
-;        (map #(%) positions))
-;    }} ))
+(defn board-movement-meta "examine all occupied positions of a board, and compile simple movement meta information"
+  [board]
+    (let [positions (keys (:pieces board))]
+      {:meta {:positions
+        (zipmap positions
+          (map #({
+            :can-slide true
+            :can-climb false
+          }) positions))
+      }} ))
+
 
