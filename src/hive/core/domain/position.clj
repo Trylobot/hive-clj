@@ -4,14 +4,14 @@
 ; position
 ;   represents a position (at table-level) of a hive piece or stack of pieces (height of stack is ignored)
 
-(def directions-enum #{
+(def directions-vector [
   0   ; 12 o'clock, north
   60  ;  2 o'clock, north-east
   120 ;  4 o'clock, south-east
   180 ;  6 o'clock, south
   240 ;  8 o'clock, south-west
   300 ; 10 o'clock, north-west
-})
+])
 
 (defn create [row col]
   {:pre [(or 
@@ -29,5 +29,5 @@
     300 (create (+ (position :row) -1) (+ (position :col) -1) )))
 
 (defn adjacencies [position]
-  (map #(translation position %) directions-enum))
+  (map #(translation position %) directions-vector))
 
