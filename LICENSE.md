@@ -4,8 +4,7 @@
 
 1. **AUTHOR** — Tyler W.R. Cole
 
-2. **SOFTWARE** — hive-clj, as served from either [Clojars](https://clojars.org)
-[GitHub](https://github.com/Trylobot/hive-clj)
+2. **SOFTWARE** — hive-clj, as served from either [Clojars](https://clojars.org) or [GitHub](https://github.com/Trylobot/hive-clj)
 
 3. **INTENT/PURPOSE** — Non-commercial license of *SOFTWARE* written by *AUTHOR*
 
