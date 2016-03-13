@@ -1,4 +1,4 @@
-(defproject trylobot/hive "0.1.1-SNAPSHOT"
+(defproject trylobot/hive "0.1.2-SNAPSHOT"
   :description "Hive(tm) core logic library, rewritten in full native clojure"
   :url "https://github.com/Trylobot/hive-clj"
   :license {:name "Research License 1.0"

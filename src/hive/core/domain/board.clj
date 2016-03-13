@@ -201,18 +201,12 @@
     (update-in % [:contents] nil) 
     %) position-adjacencies) )
 
-(defn lookup-adjacent-slide-positions 
-  ([board position]
-    (-> (lookup-adjacent-positions board position)
-      encode-slide-lookup-key-from-adjacencies
-      can-slide-lookup-table
-      (render-valid-positions-from-slide-lookup-val position) ))
-  ([board position empty-position]
-    (-> (lookup-adjacent-positions board position)
-      (pretend-position-is-empty empty-position)
-      encode-slide-lookup-key-from-adjacencies
-      can-slide-lookup-table
-      (render-valid-positions-from-slide-lookup-val position) )) )
+(defn lookup-adjacent-slide-positions [board position]
+  (-> (lookup-adjacent-positions board position)
+    encode-slide-lookup-key-from-adjacencies
+    can-slide-lookup-table
+    (render-valid-positions-from-slide-lookup-val position) ))
 
-
+(defn lookup-adjacent-climb-positions [board position]
+  nil )
 
