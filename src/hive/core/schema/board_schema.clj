@@ -38,11 +38,4 @@
       (map position-schema/revert-v2-to-v1 (keys pieces))
       (map #(mapv piece-schema/revert-v2-to-v1 %) (vals pieces)))} ))
 
-; ---------------------
-
-;(def v3 "board version 3; compressed derivative of version 2"
-;  (s/maybe [[s/Int s/Int] [
-;    [v2-piece-color v2-piece-type] ]]) )
-;; [[0 0] [[:white :beetle] [:black :queen-bee]]]
-
 

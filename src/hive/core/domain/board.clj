@@ -6,19 +6,23 @@
 ;   for dealing with hive board states
 ;   querying the board and moving pieces about 
 
-(def origin (position/create 0 0))
+(def origin "origin of the board addressing system — see doc/grid.png"
+  (position/create 0 0))
 
-(def create {:pieces {}})
+(def create "initialize an empty board with no pieces"
+  {:pieces {}})
 
-(defn purge-empties [pieces]
-  (into {} (filter #(not (empty? (second %))) pieces)) )
+(defn purge-empties "remove empty piece-stacks from board"
+  [pieces]
+    (into {} (filter #(not (empty? (second %))) pieces)) )
 
-(defn place-piece [board piece position]
-  (cond
-    (and board piece position)
-      (update-in board [:pieces position] conj piece)
-    :else
-      board) )
+(defn place-piece "add a piece to the top of a stack at position"
+  [board piece position]
+    (cond
+      (and board piece position)
+        (update-in board [:pieces position] conj piece)
+      :else
+        board) )
 
 (defn remove-piece [board position]
   (cond
@@ -201,12 +205,34 @@
     (update-in % [:contents] nil) 
     %) position-adjacencies) )
 
+; assumes, for the given position, that the piece being moved (from position)
+;   is already "in hand" (i.e., does not appear on the board)
 (defn lookup-adjacent-slide-positions [board position]
   (-> (lookup-adjacent-positions board position)
     encode-slide-lookup-key-from-adjacencies
     can-slide-lookup-table
     (render-valid-positions-from-slide-lookup-val position) ))
 
+; assumes, for the given position, that the piece being moved (from position)
+;   is already "in hand" (i.e., does not appear on the board)
 (defn lookup-adjacent-climb-positions [board position]
-  nil )
+  (let [
+    height (lookup-piece-stack-height board position)
+    adjacent-heights (zipmap position/directions-vector
+      (map #(lookup-piece-stack-height board %) position/directions-vector))]
+    nil ))
+
+; OBSERVATION 1: "climb" implements a functional definition of the concept of
+;   being "blocked" by a "gate" while trying to move from one position to another
+;   where the gate only blocks if it is at the height of the origin piece or higher
+; OBSERVATION 2: "slide" is a special case of "climb"
+;   where stack-height of origin and destination positions must both be 0
+
+; examine all occupied positions of a board, and compile simple movement meta information
+;(defn board-movement-meta [board]
+;  (let [positions (keys (:pieces board))]
+;    {:meta {:positions
+;      (zipmap positions
+;        (map #(%) positions))
+;    }} ))
 
