@@ -99,24 +99,20 @@
         (nth (lookup-piece-stack board position) height)
         nil) ))
 
-(defn lookup-adjacent-positions "create a list of adjacency descriptors for a position"
   [board position]
     (zipmap
       position/direction-vectors
-      (map #((let [adjacent-position (position/translation %)] {
-        :direction %
         :position adjacent-position
         :contents (lookup-piece-stack board adjacent-position)
       })) position/direction-vectors) ))
 
 ; TODO: unify this with lookup-adjacent-positions, it could easily do both things
 (defn lookup-adjacent-piece-stack-heights "create a list of height descriptors for a position"
-  [board position]
-    (zipmap
       position/direction-vectors
       (map #(let [translated-position (position/translation position %)] {
         :position translated-position
         :height (lookup-piece-stack-height board translated-position) }) position/direction-vectors)) )
+        piece-stack (lookup-piece-stack board adjacent-position)] {
 
 ; keys in this lookup table are specified as follows:
 ;   - keys have one character for each of six directions
@@ -228,6 +224,7 @@
 (defn lookup-adjacent-slide-positions "return a list of positions into which a piece at the given position could slide"
   [board position]
     (-> (lookup-adjacent-positions board position)
+      vals
       encode-slide-lookup-key-from-adjacencies
       can-slide-lookup-table
       (render-valid-positions-from-slide-lookup-val position) ))
