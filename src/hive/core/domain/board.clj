@@ -99,20 +99,18 @@
         (nth (lookup-piece-stack board position) height)
         nil) ))
 
+(defn lookup-adjacent-positions "lookup neighboring positions as a directional map"
   [board position]
     (zipmap
       position/direction-vectors
-        :position adjacent-position
-        :contents (lookup-piece-stack board adjacent-position)
-      })) position/direction-vectors) ))
-
-; TODO: unify this with lookup-adjacent-positions, it could easily do both things
-(defn lookup-adjacent-piece-stack-heights "create a list of height descriptors for a position"
-      position/direction-vectors
-      (map #(let [translated-position (position/translation position %)] {
-        :position translated-position
-        :height (lookup-piece-stack-height board translated-position) }) position/direction-vectors)) )
+      (map (fn [direction] (let [
+        adjacent-position (position/translation direction)
         piece-stack (lookup-piece-stack board adjacent-position)] {
+          :direction direction
+          :position adjacent-position
+          :contents piece-stack
+          :height (count piece-stack)
+        })) position/direction-vectors) ))
 
 ; keys in this lookup table are specified as follows:
 ;   - keys have one character for each of six directions
@@ -235,8 +233,17 @@
   [board position]
     (let [
       height (lookup-piece-stack-height board position)
-      adjacent-heights (lookup-adjacent-piece-stack-heights board position)]
-      (map (fn [dir] nil) position/direction-vectors) ))
+      neighbors (lookup-adjacent-positions board position)]
+      (map :position
+        (filter 
+          (fn [[direction neighbor]] 
+            (let [slide-height (max height (:height neighbor))]
+              (and ; not slide?
+                (> slide-height 0) 
+                (or ; no gate?
+                  (<= (:height (neighbors (position/rotation direction :cw))) slide-height)
+                  (<= (:height (neighbors (position/rotation direction :ccw))) slide-height)) ) ))
+          neighbors)) ))
 
 ; OBSERVATION 1: "climb" implements a functional definition of the concept of
 ;   being "blocked" by a "gate" while trying to move from one position to another
