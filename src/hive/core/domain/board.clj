@@ -251,15 +251,22 @@
 ; OBSERVATION 2: "slide" is a special case of "climb"
 ;   where stack-height of origin and destination positions must both be 0
 
-(defn board-movement-meta "examine all occupied positions of a board, and compile simple movement meta information"
-  [board]
-    (let [positions (keys (:pieces board))]
-      {:meta {:positions
-        (zipmap positions
-          (map #({
-            :can-slide true
-            :can-climb false
-          }) positions))
-      }} ))
+;(defn board-movement-meta "examine all occupied positions of a board, and compile simple movement meta information"
+;  [board]
+;    (let [positions (keys (:pieces board))]
+;      {:meta {:positions
+;        (zipmap positions
+;          (map #({
+;            :can-slide true
+;            :can-climb false
+;          }) positions))
+;      }} ))
+
+(defn lookup-occupied-adjacencies "return list of occupied adjacencies"
+  [board position]
+    (filter #(:contents %) 
+      (vals (lookup-adjacent-positions board position)) ))
+
+
 
 
