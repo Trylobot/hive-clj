@@ -107,12 +107,12 @@
     (zipmap
       position/direction-vectors
       (map (fn [direction] (let [
-        adjacent-position (position/translation direction)
+        adjacent-position (position/translation position direction)
         piece-stack (lookup-piece-stack board adjacent-position)] {
           :direction direction
           :position adjacent-position
-          :contents piece-stack
           :height (count piece-stack)
+          :contents piece-stack
         })) position/direction-vectors) ))
 
 ; keys in this lookup table are specified as follows:

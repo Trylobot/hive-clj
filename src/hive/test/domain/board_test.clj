@@ -256,7 +256,30 @@
 
 )(deftest lookup-adjacent-positions
   
-  
+  (testing "lookup-adjacent-positions, empty board"
+    (is (=
+      { 0 {:contents nil, :direction 0, :height 0, :position {:col 0, :row -2}},
+        60 {:contents nil, :direction 60, :height 0, :position {:col 1, :row -1}},
+        120 {:contents nil, :direction 120, :height 0, :position {:col 1, :row 1}},
+        180 {:contents nil, :direction 180, :height 0, :position {:col 0, :row 2}},
+        240 {:contents nil, :direction 240, :height 0, :position {:col -1, :row 1}},
+        300 {:contents nil, :direction 300, :height 0, :position {:col -1, :row -1}}}
+      (board/lookup-adjacent-positions {:pieces {}} {:row 0, :col 0}) )))
+
+  (testing "lookup-adjacent-positions, medium board"
+    (is (=
+      { 0   {:direction 0,   :position {:row -2, :col  0}, :height 2, :contents [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}]}
+        60  {:direction 60,  :position {:row -1, :col  1}, :height 0, :contents nil}
+        120 {:direction 120, :position {:row  1, :col  1}, :height 0, :contents nil}
+        180 {:direction 180, :position {:row  2, :col  0}, :height 2, :contents [{:color :black, :type :soldier-ant}, {:color :white, :type :beetle}]}
+        240 {:direction 240, :position {:row  1, :col -1}, :height 0, :contents nil}
+        300 {:direction 300, :position {:row -1, :col -1}, :height 0, :contents nil} }
+      (board/lookup-adjacent-positions 
+        {:pieces {
+          {:row 0,  :col 0} [{:color :white, :type :queen-bee}]
+          {:row 2,  :col 0} [{:color :black, :type :soldier-ant}, {:color :white, :type :beetle}]
+          {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
+        {:row 0, :col 0}) )))
 
 )(deftest encode-slide-lookup-key-from-adjacencies
   
