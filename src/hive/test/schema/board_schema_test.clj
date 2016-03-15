@@ -3,7 +3,7 @@
 (require '[schema.core :as s])
 (require '[hive.core.schema.board-schema :as board-schema])
 
-(deftest v1
+(deftest v1-test
   
   (testing "v1, default value"
     (is (s/validate board-schema/v1
@@ -19,7 +19,7 @@
         "0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]
         "2,0" [{"color" "White","type" "Grasshopper"}] }} )))
 
-)(deftest v2
+)(deftest v2-test
 
   (testing "v2, default value"
     (is (s/validate board-schema/v2

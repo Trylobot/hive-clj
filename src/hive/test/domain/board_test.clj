@@ -4,7 +4,7 @@
 (require '[hive.core.domain.piece :as piece])
 (require '[hive.core.domain.board :as board])
 
-(deftest place-piece
+(deftest place-piece-test
   
   ; place piece
   (testing "place-piece, empty board"
@@ -31,7 +31,7 @@
         nil
         (position/create 0 0)) )))
 
-)(deftest remove-piece
+)(deftest remove-piece-test
 
   ; remove piece
   (testing "remove-piece, empty board"
@@ -55,7 +55,7 @@
         {:pieces {{:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]}} 
         (position/create 0 0)) )))
 
-)(deftest move-piece 
+)(deftest move-piece-test
 
   ; move piece
   (testing "move-piece, empty board"
@@ -74,7 +74,7 @@
         {:row 0, :col 0}
         {:row -2, :col 0}) )))
 
-)(deftest count-pieces 
+)(deftest count-pieces-test
 
   ; count pieces
   (testing "count-pieces, empty board"
@@ -113,7 +113,7 @@
         {:row 2, :col 0} [{:color :white, :type :soldier-ant}] }}
         nil :soldier-ant) ) ))
 
-)(deftest search-pieces
+)(deftest search-pieces-test
 
   (testing "search-pieces, unfiltered, board with two pieces"
     (is (=
@@ -137,7 +137,7 @@
         {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]}}
         nil :beetle) )))
 
-)(deftest search-top-pieces
+)(deftest search-top-pieces-test
 
   (testing "search-top-pieces, unfiltered, board with two pieces"
     (is (=
@@ -171,7 +171,7 @@
         {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
         nil nil) )))
 
-)(deftest lookup-occupied-positions
+)(deftest lookup-occupied-positions-test
   
   (testing "lookup-occupied-positions, empty board"
     (is (=
@@ -186,7 +186,7 @@
           {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
         }}) )))
 
-)(deftest lookup-piece-stack
+)(deftest lookup-piece-stack-test
   
   (testing "lookup-piece-stack, empty board"
     (is (=
@@ -201,7 +201,7 @@
           {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
         }} {:row 0, :col 0}) )))
 
-)(deftest lookup-piece-stack-height
+)(deftest lookup-piece-stack-height-test
   
   (testing "lookup-piece-stack-height, empty board"
     (is (=
@@ -216,7 +216,7 @@
           {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
         }} {:row 0, :col 0}) )))
 
-)(deftest lookup-piece
+)(deftest lookup-piece-test
   
   (testing "lookup-piece, empty board"
     (is (=
@@ -231,7 +231,7 @@
           {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
         }} {:row 0, :col 0}) )))
 
-)(deftest lookup-piece-at-height
+)(deftest lookup-piece-at-height-test
   
   (testing "lookup-piece-at-height, empty board"
     (is (=
@@ -254,7 +254,7 @@
           {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
         }} {:row 0, :col 0} 1) )))
 
-)(deftest lookup-adjacent-positions
+)(deftest lookup-adjacent-positions-test
   
   (testing "lookup-adjacent-positions, empty board"
     (is (=
@@ -281,27 +281,39 @@
           {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
         {:row 0, :col 0}) )))
 
-)(deftest encode-slide-lookup-key-from-adjacencies
+)(deftest encode-slide-lookup-key-from-adjacencies-test
   
   
 
-)(deftest render-valid-positions-from-slide-lookup-val
+)(deftest render-valid-positions-from-slide-lookup-val-test
   
   
 
-)(deftest lookup-adjacent-slide-positions
+)(deftest lookup-adjacent-slide-positions-test
+  
+  (testing "lookup-adjacent-slide-positions, empty board"
+    (is (=
+      '()
+      (board/lookup-adjacent-slide-positions {:pieces {}} {:row 0, :col 0}) )))
+
+  (testing "lookup-adjacent-slide-positions, "
+    (is (=
+      '({:row -1, :col 1}, {:row -1, :col -1})
+      (board/lookup-adjacent-slide-positions 
+        {:pieces {
+          {:row 0,  :col 0} [{:color :white, :type :queen-bee}]
+          {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
+        {:row 0, :col 0}) )))
+
+)(deftest lookup-adjacent-climb-positions-test
   
   
 
-)(deftest lookup-adjacent-climb-positions
+)(deftest board-movement-meta-test
   
   
 
-)(deftest board-movement-meta
-  
-  
-
-)(deftest lookup-occupied-adjacencies
+)(deftest lookup-occupied-adjacencies-test
   
   
 
