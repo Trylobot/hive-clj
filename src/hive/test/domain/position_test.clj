@@ -2,12 +2,14 @@
 (require '[clojure.test :refer [deftest testing is]])
 (require '[hive.core.domain.position :as position])
 
-(deftest position-test
+(deftest create
   
   (testing "create 0,0"
     (is (= 
       {:row 0, :col 0}
       (position/create 0 0) )))
+
+)(deftest translation
   
   (testing "translate 0,0 -> 0"
     (is (=
@@ -34,10 +36,14 @@
       {:row -1, :col -1}
       (position/translation {:row 0, :col 0} 300) )))
 
+)(deftest adjacencies
+
   (testing "adjacencies of -5,-1"
     (is (=
       '({:row -7, :col -1} {:row -6, :col 0} {:row -4, :col 0} {:row -3, :col -1} {:row -4, :col -2} {:row -6, :col -2})
       (position/adjacencies {:row -5, :col -1}) )))
+
+)(deftest rotation
 
   (testing "rotation -> 0 clockwise"
     (is (=

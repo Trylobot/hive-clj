@@ -3,9 +3,8 @@
 (require '[schema.core :as s])
 (require '[hive.core.schema.board-schema :as board-schema])
 
-(deftest board-schema-test
+(deftest v1
   
-  ; v1
   (testing "v1, default value"
     (is (s/validate board-schema/v1
       {"pieces" nil} )))
@@ -20,7 +19,8 @@
         "0,0" [{"color" "White","type" "Beetle"},{"color" "Black","type" "Queen Bee"}]
         "2,0" [{"color" "White","type" "Grasshopper"}] }} )))
 
-  ; v2
+)(deftest v2
+
   (testing "v2, default value"
     (is (s/validate board-schema/v2
       {:pieces nil} )))
@@ -35,7 +35,6 @@
         {:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]
         {:row 2, :col 0} [{:color :white, :type :beetle}] }} )))
 
-  ; conversions
   (testing "upgrade, v1 --> v2"
     (is (= 
       {:pieces {{:row 0, :col 0} [{:color :white, :type :beetle} {:color :black, :type :queen-bee}]}}

@@ -4,7 +4,7 @@
 (require '[hive.core.domain.piece :as piece])
 (require '[hive.core.domain.board :as board])
 
-(deftest board-test
+(deftest place-piece
   
   ; place piece
   (testing "place-piece, empty board"
@@ -30,7 +30,9 @@
         board/create
         nil
         (position/create 0 0)) )))
-  
+
+)(deftest remove-piece
+
   ; remove piece
   (testing "remove-piece, empty board"
     (is (= 
@@ -52,7 +54,9 @@
       (board/remove-piece 
         {:pieces {{:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]}} 
         (position/create 0 0)) )))
-  
+
+)(deftest move-piece 
+
   ; move piece
   (testing "move-piece, empty board"
     (is (=
@@ -69,6 +73,8 @@
         {:pieces {{:row 0, :col 0} [{:color :white, :type :queen-bee}]}}
         {:row 0, :col 0}
         {:row -2, :col 0}) )))
+
+)(deftest count-pieces 
 
   ; count pieces
   (testing "count-pieces, empty board"
@@ -107,6 +113,8 @@
         {:row 2, :col 0} [{:color :white, :type :soldier-ant}] }}
         nil :soldier-ant) ) ))
 
+)(deftest search-pieces
+
   (testing "search-pieces, unfiltered, board with two pieces"
     (is (=
       '({:position {:row 0, :col 0}, :layer 0, :piece {:color :white, :type :queen-bee}}
@@ -128,6 +136,8 @@
       (board/search-pieces {:pieces {
         {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]}}
         nil :beetle) )))
+
+)(deftest search-top-pieces
 
   (testing "search-top-pieces, unfiltered, board with two pieces"
     (is (=
@@ -160,4 +170,117 @@
         {:row 2,  :col 0} [{:color :black, :type :soldier-ant}, {:color :white, :type :beetle}]
         {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
         nil nil) )))
+
+)(deftest lookup-occupied-positions
+  
+  (testing "lookup-occupied-positions, empty board"
+    (is (=
+      '()
+      (board/lookup-occupied-positions {:pieces {}}) )))
+  
+  (testing "lookup-occupied-positions, small board"
+    (is (=
+      '({:row 0, :col 0})
+      (board/lookup-occupied-positions
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+        }}) )))
+
+)(deftest lookup-piece-stack
+  
+  (testing "lookup-piece-stack, empty board"
+    (is (=
+      nil
+      (board/lookup-piece-stack {:pieces {}} {:row 0, :col 0}) )))
+
+  (testing "lookup-piece-stack, small board"
+    (is (=
+      [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+      (board/lookup-piece-stack 
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+        }} {:row 0, :col 0}) )))
+
+)(deftest lookup-piece-stack-height
+  
+  (testing "lookup-piece-stack-height, empty board"
+    (is (=
+      0
+      (board/lookup-piece-stack-height {:pieces {}} {:row 0, :col 0}) )))
+
+  (testing "lookup-piece-stack-height, small board"
+    (is (=
+      2
+      (board/lookup-piece-stack-height 
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+        }} {:row 0, :col 0}) )))
+
+)(deftest lookup-piece
+  
+  (testing "lookup-piece, empty board"
+    (is (=
+      nil
+      (board/lookup-piece {:pieces {}} {:row 0, :col 0}) )))
+
+  (testing "lookup-piece, small board"
+    (is (=
+      {:color :black, :type :beetle}
+      (board/lookup-piece 
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+        }} {:row 0, :col 0}) )))
+
+)(deftest lookup-piece-at-height
+  
+  (testing "lookup-piece-at-height, empty board"
+    (is (=
+      nil
+      (board/lookup-piece-at-height {:pieces {}} {:row 0, :col 0} 0) )))
+
+  (testing "lookup-piece-at-height, small board, height 0"
+    (is (=
+      {:color :white, :type :queen-bee}
+      (board/lookup-piece-at-height 
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+        }} {:row 0, :col 0} 0) )))
+  
+  (testing "lookup-piece-at-height, small board, height 1"
+    (is (=
+      {:color :black, :type :beetle}
+      (board/lookup-piece-at-height 
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+        }} {:row 0, :col 0} 1) )))
+
+)(deftest lookup-adjacent-positions
+  
+  
+
+)(deftest encode-slide-lookup-key-from-adjacencies
+  
+  
+
+)(deftest render-valid-positions-from-slide-lookup-val
+  
+  
+
+)(deftest lookup-adjacent-slide-positions
+  
+  
+
+)(deftest lookup-adjacent-climb-positions
+  
+  
+
+)(deftest board-movement-meta
+  
+  
+
+)(deftest lookup-occupied-adjacencies
+  
+  
+
 )
+

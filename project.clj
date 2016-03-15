@@ -1,4 +1,4 @@
-(defproject trylobot/hive "0.1.2-SNAPSHOT"
+(defproject trylobot/hive "0.1.3-SNAPSHOT"
   :description "Hive(tm) core logic library, rewritten in full native clojure"
   :url "https://github.com/Trylobot/hive-clj"
   :license {:name "Research License 1.0"
@@ -11,8 +11,5 @@
   :main ^:skip-aot hive.main
   :target-path "target/%s"
   :profiles {
-    :uberjar {:aot :all}
-    :dev {:plugins [
-      [venantius/ultra "0.4.1"]
-      [lein-autoreload "0.1.0"]]} }
+    :uberjar {:aot :all} }
 )

@@ -68,8 +68,8 @@
       (filter #(piece/like? (:piece %) color-filter type-filter)) ))
 
 (defn search-top-pieces "search only the top pieces of each stack on the board, filtering by color and/or type"
-  [{pieces :pieces} color-filter type-filter]
-    (->> pieces
+  [board color-filter type-filter]
+    (->> (:pieces board)
       (map (fn [board-position]
         (let [position (first board-position)
               stack (second board-position)]
@@ -77,12 +77,13 @@
       (filter #(piece/like? (:piece %) color-filter type-filter)) ))
 
 (defn lookup-occupied-positions "return all positions on the board having 1 or more piece"
-  [{pieces :pieces}]
-    (filter #(> (count (get pieces %)) 0) (keys pieces)) )
+  [board]
+    (let [{pieces :pieces} board]
+      (filter #(> (count (get pieces %)) 0) (keys pieces)) ))
 
 (defn lookup-piece-stack "return the stack of pieces at position"
-  [{pieces :pieces} position]
-    (get pieces position) )
+  [board position]
+    (get (:pieces board) position) )
 
 (defn lookup-piece-stack-height "get the number of pieces at position"
   [board position]
@@ -93,10 +94,12 @@
     (last (lookup-piece-stack board position)) )
 
 (defn lookup-piece-at-height "get the piece at position residing at height in the stack, or nil"
-  [board position height]
-    (let [stack-height (lookup-piece-stack-height board position)]
-      (if (and (>= stack-height 0) (< stack-height height))
-        (nth (lookup-piece-stack board position) height)
+  [board position idx]
+    (let [
+      stack (lookup-piece-stack board position)
+      height (count stack)]
+      (if (and (>= idx 0) (< idx height))
+        (nth stack idx)
         nil) ))
 
 (defn lookup-adjacent-positions "lookup neighboring positions as a directional map"
@@ -251,16 +254,16 @@
 ; OBSERVATION 2: "slide" is a special case of "climb"
 ;   where stack-height of origin and destination positions must both be 0
 
-;(defn board-movement-meta "examine all occupied positions of a board, and compile simple movement meta information"
-;  [board]
-;    (let [positions (keys (:pieces board))]
-;      {:meta {:positions
-;        (zipmap positions
-;          (map #({
-;            :can-slide true
-;            :can-climb false
-;          }) positions))
-;      }} ))
+(defn board-movement-meta "examine all occupied positions of a board, and compile simple movement meta information"
+ [board]
+   (let [positions (keys (:pieces board))]
+     {:meta {:positions
+       (zipmap positions
+         (map (fn [position] {
+           :can-slide (lookup-adjacent-slide-positions board position)
+           :can-climb (lookup-adjacent-climb-positions board position)
+         }) positions))
+     }} ))
 
 (defn lookup-occupied-adjacencies "return list of occupied adjacencies"
   [board position]
