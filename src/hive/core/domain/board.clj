@@ -76,10 +76,10 @@
           {:position position, :layer (->> stack count dec), :piece (last stack) }) ))
       (filter #(piece/like? (:piece %) color-filter type-filter)) ))
 
-(defn lookup-occupied-positions "return all positions on the board having 1 or more piece"
+(defn lookup-occupied-positions "returns the occupied positions of board as a set"
   [board]
     (let [{pieces :pieces} board]
-      (filter #(> (count (get pieces %)) 0) (keys pieces)) ))
+      (set (filter #(> (count (get pieces %)) 0) (keys pieces)) )))
 
 (defn lookup-piece-stack "return the stack of pieces at position"
   [board position]
@@ -222,6 +222,8 @@
       (filter #(:contents %) 
         (vals (lookup-adjacent-positions board position))) ))
 
-
+(defn lookup-slide-destinations "return a list of possible destinations that can be reached from a given starting position by only sliding"
+  [board start-position]
+    nil )
 
 

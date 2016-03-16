@@ -175,12 +175,12 @@
   
   (testing "lookup-occupied-positions, empty board"
     (is (=
-      '()
+      #{}
       (board/lookup-occupied-positions {:pieces {}}) )))
   
   (testing "lookup-occupied-positions, small board"
     (is (=
-      '({:row 0, :col 0})
+      #{{:row 0, :col 0}}
       (board/lookup-occupied-positions
         {:pieces {
           {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
