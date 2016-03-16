@@ -390,7 +390,15 @@
 
 )(deftest lookup-occupied-adjacencies-test
   
-  
+  (testing "lookup-occupied-adjacencies, U-shape"
+    (is (=
+      '({:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1})
+      (board/lookup-occupied-adjacencies {:pieces {
+        {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+        {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
+        {:row 2, :col 0} [{:color :black, :type :soldier-ant}]
+        {:row 1, :col -1} [{:color :black, :type :soldier-ant}]
+        {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }} {:row 0, :col 0}) )))
 
 )
 

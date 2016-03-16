@@ -246,7 +246,7 @@
             (or ; not blocked by a gate?
               (<= (:height (neighbors (position/rotation (:direction neighbor) :cw))) slide-height)
               (<= (:height (neighbors (position/rotation (:direction neighbor) :ccw))) slide-height)) ) ))]
-      (map #(get % :position)
+      (map :position
         (filter can-climb-predicate (vals neighbors))) ))
 
 ; OBSERVATION 1: "climb" implements a functional definition of the concept of
@@ -268,8 +268,9 @@
 
 (defn lookup-occupied-adjacencies "return list of occupied adjacencies"
   [board position]
-    (filter #(:contents %) 
-      (vals (lookup-adjacent-positions board position)) ))
+    (map :position
+      (filter #(:contents %) 
+        (vals (lookup-adjacent-positions board position))) ))
 
 
 
