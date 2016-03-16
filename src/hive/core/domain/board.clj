@@ -4,7 +4,7 @@
 
 ; board
 ;   for dealing with hive board states
-;   querying the board and moving pieces about 
+;   querying the board and moving pieces about
 
 (def origin "origin of the board addressing system — see doc/grid.png"
   (position/create 0 0))
@@ -24,7 +24,7 @@
       :else
         board) )
 
-(defn remove-piece "remove the piece at the top of the stack at position" 
+(defn remove-piece "remove the piece at the top of the stack at position"
   [board position]
     (cond
       (and board position)
@@ -148,7 +148,7 @@
           (conj result (rotate-seed-pair-left (last result))))
         [seed-pair]
         (range 5))))]
-    (reduce 
+    (reduce
       (fn [result seed-pair]
         (apply conj result (all-rotations-of-pair seed-pair)))
       can-slide-lookup-table-seed ; both the initial value to expand, and the destination for the result
@@ -159,7 +159,7 @@
 (defn encode-slide-lookup-key-from-adjacencies "transform a list of adjacency descriptors into a can-slide table lookup key"
   [position-adjacencies]
     (apply str (map (fn [adjacency]
-      (if (or (zero? (:height adjacency)) (nil? (:contents adjacency))) 
+      (if (or (zero? (:height adjacency)) (nil? (:contents adjacency)))
         \. \1))
       (vals position-adjacencies)) ))
 
@@ -167,8 +167,8 @@
 ; TODO: destructure for cleanliness and further brevity; i.e., filter direction-vectors in a single step, creating no extra structures
 (defn render-valid-positions-from-slide-lookup-val "transform a can-slide table lookup value into a filtered list of positions"
   [slide-lookup-val origin-position]
-    (->> (map-indexed 
-      (fn [idx dir] (let [is-valid (= \1 (nth slide-lookup-val idx))] 
+    (->> (map-indexed
+      (fn [idx dir] (let [is-valid (= \1 (nth slide-lookup-val idx))]
         [dir is-valid] )) position/direction-vectors)
       (filter #(second %))
       (map #(position/translation origin-position (first %))) ))
@@ -190,9 +190,9 @@
     (let [
       height (lookup-piece-stack-height board position)
       neighbors (lookup-adjacent-positions board position)
-      can-climb-predicate (fn [neighbor] 
+      can-climb-predicate (fn [neighbor]
         (let [slide-height (max height (:height neighbor))]
-          (and 
+          (and
             (> slide-height 0) ; not a table-slide?
             (or ; not blocked by a gate?
               (<= (:height (neighbors (position/rotation (:direction neighbor) :cw))) slide-height)
@@ -220,11 +220,35 @@
 (defn lookup-occupied-adjacencies "return list of occupied adjacencies"
   [board position]
     (set (map :position
-      (filter #(:contents %) 
+      (filter #(:contents %)
         (vals (lookup-adjacent-positions board position)))) ))
 
 (defn lookup-slide-destinations "return a list of possible destinations that can be reached from a given starting position by only sliding"
   [board start-position]
-    nil )
+    (loop [
+      to-visit #{start-position}
+      visited #{}
+      destinations #{}]
+      (if (empty? to-visit)
+        ; done
+        destinations
+        ; more to see
+        (let [cursor (first to-visit)
+              slide-destinations (lookup-adjacent-slide-positions cursor)]
+          (recur
+            (apply conj (rest to-visit) slide-destinations)
+            (conj visited cursor)
+            (apply conj slide-destinations) ) ))))
+
+
+
+
+
+
+
+
+
+
+
 
 
