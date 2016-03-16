@@ -283,11 +283,22 @@
 
 )(deftest encode-slide-lookup-key-from-adjacencies-test
   
-  
+  (testing "encode-slide-lookup-key-from-adjacencies, medium board"
+    (is (=
+      "1..1.."
+      (board/encode-slide-lookup-key-from-adjacencies
+        (board/lookup-adjacent-positions {:pieces {
+          {:row 0,  :col 0} [{:color :white, :type :queen-bee}]
+          {:row 2,  :col 0} [{:color :black, :type :soldier-ant}, {:color :white, :type :beetle}]
+          {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
+        {:row 0, :col 0})) )))
 
 )(deftest render-valid-positions-from-slide-lookup-val-test
   
-  
+  (testing "render-valid-positions-from-slide-lookup-val, lookup val with two positions"
+    (is (=
+      '({:row -2, :col 0}, {:row 2, :col 0})
+      (board/render-valid-positions-from-slide-lookup-val "1..1.." {:row 0, :col 0}) )))
 
 )(deftest lookup-adjacent-slide-positions-test
   

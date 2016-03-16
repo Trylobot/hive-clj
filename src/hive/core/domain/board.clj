@@ -208,7 +208,10 @@
 
 (defn encode-slide-lookup-key-from-adjacencies "transform a list of adjacency descriptors into a can-slide table lookup key"
   [position-adjacencies]
-    (apply str (map #(if (nil? (:contents %)) \. \1 ) position-adjacencies) ))
+    (apply str (map (fn [adjacency]
+      (if (or (zero? (:height adjacency)) (nil? (:contents adjacency))) 
+        \. \1))
+      (vals position-adjacencies)) ))
 
 ; position/direction-vectors
 ; TODO: destructure for cleanliness and further brevity; i.e., filter direction-vectors in a single step, creating no extra structures
@@ -225,7 +228,6 @@
 (defn lookup-adjacent-slide-positions "return a list of positions into which a piece at the given position could slide"
   [board position]
     (-> (lookup-adjacent-positions board position)
-      vals
       encode-slide-lookup-key-from-adjacencies
       can-slide-lookup-table
       (render-valid-positions-from-slide-lookup-val position) ))
