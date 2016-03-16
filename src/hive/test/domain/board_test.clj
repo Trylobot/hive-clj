@@ -281,6 +281,78 @@
           {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
         {:row 0, :col 0}) )))
 
+)(deftest generate-can-slide-lookup-table-test
+
+  (testing "generate-can-slide-lookup-table"
+    (is (=
+      { ; can-slide-lookup-table (written by hand in javascript and ported to clojure, then moved to test
+        "......" "......" ; island cannot move
+        ".....1" "1...1." ; slide around single piece
+        "....1." "...1.1" ; slide around single piece
+        "....11" "1..1.." ; slide alongside pair of adjacent pieces
+        "...1.." "..1.1." ; slide around single piece
+        "...1.1" "1.1..." ; slide up and out of crater
+        "...11." "..1..1" ; slide alongside pair of adjacent pieces
+        "...111" "1.1..." ; slide up and out of crater
+        "..1..." ".1.1.." ; slide around single piece
+        "..1..1" "11.11." ; slide between friends
+        "..1.1." ".1...1" ; slide up and out of crater
+        "..1.11" "11...." ; slide out of corner
+        "..11.." ".1..1." ; slide alongside pair of adjacent pieces
+        "..11.1" "11...." ; slide out of corner
+        "..111." ".1...1" ; slide up and out of crater
+        "..1111" "11...." ; slide to escape from pit
+        ".1...." "1.1..." ; slide around single piece
+        ".1...1" "..1.1." ; slide up and out of crater
+        ".1..1." "1.11.1" ; slide between friends
+        ".1..11" "..11.." ; slide out of corner
+        ".1.1.." "1...1." ; slide up and out of crater
+        ".1.1.1" "......" ; nearly-surrounded piece cannot move
+        ".1.11." "1....1" ; slide out of corner
+        ".1.111" "......" ; nearly-surrounded piece cannot move
+        ".11..." "1..1.." ; slide alongside pair of adjacent pieces
+        ".11..1" "...11." ; slide out of corner
+        ".11.1." "1....1" ; slide out of corner
+        ".11.11" "......" ; nearly-surrounded piece cannot move
+        ".111.." "1...1." ; slide up and out of crater
+        ".111.1" "......" ; nearly-surrounded piece cannot move
+        ".1111." "1....1" ; slide to escape from pit
+        ".11111" "......" ; nearly-surrounded piece cannot move
+        "1....." ".1...1" ; slide around single piece
+        "1....1" ".1..1." ; slide alongside pair of adjacent pieces
+        "1...1." ".1.1.." ; slide up and out of crater
+        "1...11" ".1.1.." ; slide up and out of crater
+        "1..1.." ".11.11" ; slide between friends
+        "1..1.1" ".11..." ; slide out of corner
+        "1..11." ".11..." ; slide out of corner
+        "1..111" ".11..." ; slide to escape from pit
+        "1.1..." "...1.1" ; slide up and out of crater
+        "1.1..1" "...11." ; slide out of corner
+        "1.1.1." "......" ; nearly-surrounded piece cannot move
+        "1.1.11" "......" ; nearly-surrounded piece cannot move
+        "1.11.." "....11" ; slide out of corner
+        "1.11.1" "......" ; nearly-surrounded piece cannot move
+        "1.111." "......" ; nearly-surrounded piece cannot move
+        "1.1111" "......" ; nearly-surrounded piece cannot move
+        "11...." "..1..1" ; slide alongside pair of adjacent pieces
+        "11...1" "..1.1." ; slide up and out of crater
+        "11..1." "..11.." ; slide out of corner
+        "11..11" "..11.." ; slide to escape from pit
+        "11.1.." "....11" ; slide out of corner
+        "11.1.1" "......" ; nearly-surrounded piece cannot move
+        "11.11." "......" ; nearly-surrounded piece cannot move
+        "11.111" "......" ; nearly-surrounded piece cannot move
+        "111..." "...1.1" ; slide up and out of crater
+        "111..1" "...11." ; slide to escape from pit
+        "111.1." "......" ; nearly-surrounded piece cannot move
+        "111.11" "......" ; nearly-surrounded piece cannot move
+        "1111.." "....11" ; slide to escape from pit
+        "1111.1" "......" ; nearly-surrounded piece cannot move
+        "11111." "......" ; nearly-surrounded piece cannot move
+        "111111" "......" ; completely surrounded piece cannot move
+      }
+      (board/generate-can-slide-lookup-table board/can-slide-lookup-table-seed) )))
+
 )(deftest encode-slide-lookup-key-from-adjacencies-test
   
   (testing "encode-slide-lookup-key-from-adjacencies, medium board"
