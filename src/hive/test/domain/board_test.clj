@@ -376,12 +376,12 @@
   
   (testing "lookup-adjacent-slide-positions, empty board"
     (is (=
-      '()
+      #{}
       (board/lookup-adjacent-slide-positions {:pieces {}} {:row 0, :col 0}) )))
 
   (testing "lookup-adjacent-slide-positions, the girl next door"
     (is (=
-      '({:row -1, :col 1}, {:row -1, :col -1})
+      #{{:row -1, :col 1}, {:row -1, :col -1}}
       (board/lookup-adjacent-slide-positions 
         (board/remove-piece {:pieces {
           {:row 0,  :col 0} [{:color :white, :type :spider}]
@@ -390,7 +390,7 @@
 
   (testing "lookup-adjacent-slide-positions, climb out of the pit"
     (is (=
-      '({:row -2, :col 0}, {:row -1, :col 1})
+      #{{:row -2, :col 0}, {:row -1, :col 1}}
       (board/lookup-adjacent-slide-positions
         (board/remove-piece {:pieces {
           {:row 0, :col 0} [{:color :white, :type :queen-bee}]
@@ -402,7 +402,7 @@
 
   (testing "lookup-adjacent-slide-positions, imminent loss"
     (is (=
-      '()
+      #{}
       (board/lookup-adjacent-slide-positions
         (board/remove-piece {:pieces {
           {:row 0, :col 0} [{:color :white, :type :queen-bee}]
@@ -418,12 +418,12 @@
   
   (testing "lookup-adjacent-climb-positions, empty board"
     (is (=
-      '()
+      #{}
       (board/lookup-adjacent-climb-positions {:pieces {}} {:row 0, :col 0}) )))
 
   (testing "lookup-adjacent-climb-positions, the girl next door"
     (is (=
-      '({:row -2, :col 0})
+      #{{:row -2, :col 0}}
       (board/lookup-adjacent-climb-positions 
         (board/remove-piece {:pieces {
           {:row 0,  :col 0} [{:color :white, :type :spider}]
@@ -432,7 +432,7 @@
 
   (testing "lookup-adjacent-climb-positions, climb out of the pit"
     (is (=
-      '({:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1})
+      #{{:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1}}
       (board/lookup-adjacent-climb-positions
         (board/remove-piece {:pieces {
           {:row 0, :col 0} [{:color :white, :type :queen-bee}]
@@ -444,7 +444,7 @@
 
   (testing "lookup-adjacent-climb-positions, imminent loss"
     (is (=
-      '({:row -2, :col 0} {:row -1, :col 1} {:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1})
+      #{{:row -2, :col 0} {:row -1, :col 1} {:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1}}
       (board/lookup-adjacent-climb-positions
         (board/remove-piece {:pieces {
           {:row 0, :col 0} [{:color :white, :type :queen-bee}]
@@ -464,7 +464,7 @@
   
   (testing "lookup-occupied-adjacencies, U-shape"
     (is (=
-      '({:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1})
+      #{{:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1}}
       (board/lookup-occupied-adjacencies {:pieces {
         {:row 0, :col 0} [{:color :white, :type :queen-bee}]
         {:row 1, :col 1} [{:color :black, :type :soldier-ant}]

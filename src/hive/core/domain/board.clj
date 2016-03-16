@@ -180,7 +180,8 @@
     (-> (lookup-adjacent-positions board position)
       encode-slide-lookup-key-from-adjacencies
       can-slide-lookup-table
-      (render-valid-positions-from-slide-lookup-val position) ))
+      (render-valid-positions-from-slide-lookup-val position)
+      set ))
 
 ; assumes, for the given position, that the piece being moved (from position)
 ;   is already "in hand" (i.e., does not appear on the board)
@@ -196,8 +197,8 @@
             (or ; not blocked by a gate?
               (<= (:height (neighbors (position/rotation (:direction neighbor) :cw))) slide-height)
               (<= (:height (neighbors (position/rotation (:direction neighbor) :ccw))) slide-height)) ) ))]
-      (map :position
-        (filter can-climb-predicate (vals neighbors))) ))
+      (set (map :position
+        (filter can-climb-predicate (vals neighbors)))) ))
 
 ; OBSERVATION 1: "climb" implements a functional definition of the concept of
 ;   being "blocked" by a "gate" while trying to move from one position to another
@@ -218,9 +219,9 @@
 
 (defn lookup-occupied-adjacencies "return list of occupied adjacencies"
   [board position]
-    (map :position
+    (set (map :position
       (filter #(:contents %) 
-        (vals (lookup-adjacent-positions board position))) ))
+        (vals (lookup-adjacent-positions board position)))) ))
 
 (defn lookup-slide-destinations "return a list of possible destinations that can be reached from a given starting position by only sliding"
   [board start-position]
