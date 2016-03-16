@@ -307,16 +307,16 @@
       '()
       (board/lookup-adjacent-slide-positions {:pieces {}} {:row 0, :col 0}) )))
 
-  (testing "lookup-adjacent-slide-positions, board with two stacks, three pieces"
+  (testing "lookup-adjacent-slide-positions, the girl next door"
     (is (=
       '({:row -1, :col 1}, {:row -1, :col -1})
       (board/lookup-adjacent-slide-positions 
         {:pieces {
-          {:row 0,  :col 0} [{:color :white, :type :queen-bee}]
-          {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
+          {:row 0,  :col 0} [{:color :white, :type :spider}]
+          {:row -2, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}] }}
         {:row 0, :col 0}) )))
 
-  (testing "lookup-adjacent-slide-positions, board with five stacks, five pieces"
+  (testing "lookup-adjacent-slide-positions, climb out of the pit"
     (is (=
       '({:row -2, :col 0}, {:row -1, :col 1})
       (board/lookup-adjacent-slide-positions
@@ -326,6 +326,20 @@
           {:row 2, :col 0} [{:color :black, :type :soldier-ant}]
           {:row 1, :col -1} [{:color :black, :type :soldier-ant}]
           {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }}
+        {:row 0, :col 0}) )))
+
+  (testing "lookup-adjacent-slide-positions, imminent loss"
+    (is (=
+      '()
+      (board/lookup-adjacent-slide-positions
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+          {:row -2, :col 0} [{:color :black, :type :soldier-ant}]
+          {:row -1, :col 1} [{:color :black, :type :soldier-ant}]
+          {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
+          {:row 2, :col 0} [{:color :black, :type :spider}]
+          {:row 1, :col -1} [{:color :black, :type :spider}]
+          {:row -1, :col -1} [{:color :black, :type :beetle}] }}
         {:row 0, :col 0}) )))
 
 )(deftest lookup-adjacent-climb-positions-test
