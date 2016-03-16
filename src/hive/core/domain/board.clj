@@ -238,17 +238,16 @@
   [board position]
     (let [
       height (lookup-piece-stack-height board position)
-      neighbors (lookup-adjacent-positions board position)]
-      (map :position
-        (filter 
-          (fn [[direction neighbor]] 
-            (let [slide-height (max height (:height neighbor))]
-              (and ; not slide?
-                (> slide-height 0) 
-                (or ; no gate?
-                  (<= (:height (neighbors (position/rotation direction :cw))) slide-height)
-                  (<= (:height (neighbors (position/rotation direction :ccw))) slide-height)) ) ))
-          neighbors)) ))
+      neighbors (lookup-adjacent-positions board position)
+      can-climb-predicate (fn [neighbor] 
+        (let [slide-height (max height (:height neighbor))]
+          (and 
+            (> slide-height 0) ; not a table-slide?
+            (or ; not blocked by a gate?
+              (<= (:height (neighbors (position/rotation (:direction neighbor) :cw))) slide-height)
+              (<= (:height (neighbors (position/rotation (:direction neighbor) :ccw))) slide-height)) ) ))]
+      (map #(get % :position)
+        (filter can-climb-predicate (vals neighbors))) ))
 
 ; OBSERVATION 1: "climb" implements a functional definition of the concept of
 ;   being "blocked" by a "gate" while trying to move from one position to another

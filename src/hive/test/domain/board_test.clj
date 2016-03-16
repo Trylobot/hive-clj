@@ -311,40 +311,78 @@
     (is (=
       '({:row -1, :col 1}, {:row -1, :col -1})
       (board/lookup-adjacent-slide-positions 
-        {:pieces {
+        (board/remove-piece {:pieces {
           {:row 0,  :col 0} [{:color :white, :type :spider}]
-          {:row -2, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}] }}
+          {:row -2, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}] }} {:row 0, :col 0})
         {:row 0, :col 0}) )))
 
   (testing "lookup-adjacent-slide-positions, climb out of the pit"
     (is (=
       '({:row -2, :col 0}, {:row -1, :col 1})
       (board/lookup-adjacent-slide-positions
-        {:pieces {
+        (board/remove-piece {:pieces {
           {:row 0, :col 0} [{:color :white, :type :queen-bee}]
           {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
           {:row 2, :col 0} [{:color :black, :type :soldier-ant}]
           {:row 1, :col -1} [{:color :black, :type :soldier-ant}]
-          {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }}
+          {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }} {:row 0, :col 0})
         {:row 0, :col 0}) )))
 
   (testing "lookup-adjacent-slide-positions, imminent loss"
     (is (=
       '()
       (board/lookup-adjacent-slide-positions
-        {:pieces {
+        (board/remove-piece {:pieces {
           {:row 0, :col 0} [{:color :white, :type :queen-bee}]
           {:row -2, :col 0} [{:color :black, :type :soldier-ant}]
           {:row -1, :col 1} [{:color :black, :type :soldier-ant}]
           {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
           {:row 2, :col 0} [{:color :black, :type :spider}]
           {:row 1, :col -1} [{:color :black, :type :spider}]
-          {:row -1, :col -1} [{:color :black, :type :beetle}] }}
+          {:row -1, :col -1} [{:color :black, :type :beetle}] }} {:row 0, :col 0})
         {:row 0, :col 0}) )))
 
 )(deftest lookup-adjacent-climb-positions-test
   
-  
+  (testing "lookup-adjacent-climb-positions, empty board"
+    (is (=
+      '()
+      (board/lookup-adjacent-climb-positions {:pieces {}} {:row 0, :col 0}) )))
+
+  (testing "lookup-adjacent-climb-positions, the girl next door"
+    (is (=
+      '({:row -2, :col 0})
+      (board/lookup-adjacent-climb-positions 
+        (board/remove-piece {:pieces {
+          {:row 0,  :col 0} [{:color :white, :type :spider}]
+          {:row -2, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}] }} {:row 0, :col 0})
+        {:row 0, :col 0}) )))
+
+  (testing "lookup-adjacent-climb-positions, climb out of the pit"
+    (is (=
+      '({:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1})
+      (board/lookup-adjacent-climb-positions
+        (board/remove-piece {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+          {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
+          {:row 2, :col 0} [{:color :black, :type :soldier-ant}]
+          {:row 1, :col -1} [{:color :black, :type :soldier-ant}]
+          {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }} {:row 0, :col 0})
+        {:row 0, :col 0}) )))
+
+  (testing "lookup-adjacent-climb-positions, imminent loss"
+    (is (=
+      '({:row -2, :col 0} {:row -1, :col 1} {:row 1, :col 1} {:row 2, :col 0} {:row 1, :col -1} {:row -1, :col -1})
+      (board/lookup-adjacent-climb-positions
+        (board/remove-piece {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+          {:row -2, :col 0} [{:color :black, :type :soldier-ant}]
+          {:row -1, :col 1} [{:color :black, :type :soldier-ant}]
+          {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
+          {:row 2, :col 0} [{:color :black, :type :spider}]
+          {:row 1, :col -1} [{:color :black, :type :spider}]
+          {:row -1, :col -1} [{:color :black, :type :beetle}] }} {:row 0, :col 0})
+        {:row 0, :col 0}) )))
 
 )(deftest board-movement-meta-test
   
