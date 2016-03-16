@@ -307,13 +307,25 @@
       '()
       (board/lookup-adjacent-slide-positions {:pieces {}} {:row 0, :col 0}) )))
 
-  (testing "lookup-adjacent-slide-positions, "
+  (testing "lookup-adjacent-slide-positions, board with two stacks, three pieces"
     (is (=
       '({:row -1, :col 1}, {:row -1, :col -1})
       (board/lookup-adjacent-slide-positions 
         {:pieces {
           {:row 0,  :col 0} [{:color :white, :type :queen-bee}]
           {:row -2, :col 0} [{:color :white, :type :grasshopper}, {:color :black, :type :beetle}] }}
+        {:row 0, :col 0}) )))
+
+  (testing "lookup-adjacent-slide-positions, board with five stacks, five pieces"
+    (is (=
+      '({:row -2, :col 0}, {:row -1, :col 1})
+      (board/lookup-adjacent-slide-positions
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+          {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
+          {:row 2, :col 0} [{:color :black, :type :soldier-ant}]
+          {:row 1, :col -1} [{:color :black, :type :soldier-ant}]
+          {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }}
         {:row 0, :col 0}) )))
 
 )(deftest lookup-adjacent-climb-positions-test
