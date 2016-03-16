@@ -1,5 +1,6 @@
 (ns hive.core.domain.position)
 (require '[clojure.string :as str])
+(require '[hive.core.util :refer :all])
 
 ; position
 ;   represents a position (at table-level) of a hive piece or stack of pieces (height of stack is ignored)
@@ -18,20 +19,23 @@
 
 (defn create "create a valid position on the grid — see doc/grid.png"
   [row col]
-    {:pre [(or 
-      (and (even? row) (even? col)) 
-      (and (odd? row) (odd? col)) )]}
+    {:pre [(or (and (even? row) (even? col)) 
+               (and (odd?  row) (odd?  col)) )]}
     {:row row, :col col})
 
 (defn translation "return result of applying direction vector to position"
   [position direction]
-    (case direction
-      0   (create (+ (position :row) -2) (+ (position :col) +0) )
-      60  (create (+ (position :row) -1) (+ (position :col) +1) )
-      120 (create (+ (position :row) +1) (+ (position :col) +1) )
-      180 (create (+ (position :row) +2) (+ (position :col) -0) )
-      240 (create (+ (position :row) +1) (+ (position :col) -1) )
-      300 (create (+ (position :row) -1) (+ (position :col) -1) )))
+    {:pre [(map? position)
+           (contains? position :row) (contains? position :col)
+           (contains-value? direction-vectors direction)]}
+    (let [{row :row, col :col} position]
+      (case direction
+        0   (create (+ row -2) (+ col +0))
+        60  (create (+ row -1) (+ col +1))
+        120 (create (+ row +1) (+ col +1))
+        180 (create (+ row +2) (+ col -0))
+        240 (create (+ row +1) (+ col -1))
+        300 (create (+ row -1) (+ col -1)) )))
 
 (defn rotation-clockwise "return result of applying a single unit of clockwise rotation to direction vector"
   [direction]

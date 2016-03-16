@@ -472,5 +472,19 @@
         {:row 1, :col -1} [{:color :black, :type :soldier-ant}]
         {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }} {:row 0, :col 0}) )))
 
-)
+)(deftest lookup-slide-destinations-test
 
+  (testing "lookup-slide-destinations, small board"
+    (is (=
+      #{{:row -1, :col  1}
+        {:row -3, :col  1}
+        {:row -4, :col  0}
+        {:row -3, :col -1}
+        {:row -1, :col -1}}
+      (board/lookup-slide-destinations
+        {:pieces {{:row 0,  :col 0} [{:color :white, :type :spider}] 
+                  {:row -2, :col 0} [{:color :white, :type :queen-bee}, 
+                                     {:color :black, :type :beetle}] }}
+        {:row 0, :col 0}) )))
+
+)
