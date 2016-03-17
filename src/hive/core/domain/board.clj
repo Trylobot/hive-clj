@@ -217,13 +217,18 @@
          }) positions))
      }} ))
 
-(defn lookup-occupied-adjacencies "return list of occupied adjacencies"
+(defn lookup-occupied-adjacencies "return set of occupied adjacencies"
   [board position]
     (set (map :position
       (filter #(:contents %)
         (vals (lookup-adjacent-positions board position)))) ))
 
-(defn lookup-slide-destinations "return a list of possible destinations that can be reached from a given starting position by only sliding"
+(defn search-free-spaces "return set of open spaces with adjacencies of only the specified color"
+  [board color-filter]
+    (let [occupied-positions (keys (:pieces board))]
+      (map #(%) occupied-positions) ))
+
+(defn lookup-slide-destinations "return set of possible destinations that can be reached from a given starting position by only sliding"
   ([board start-position]
     (lookup-slide-destinations board start-position (list start-position) #{} #{}) )
   ([board start-position to-visit visited destinations]
