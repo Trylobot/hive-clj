@@ -1,4 +1,5 @@
 (ns hive.core.domain.board)
+(require '[hive.core.util :refer :all])
 (require '[hive.core.domain.position :as position])
 (require '[hive.core.domain.piece :as piece])
 
@@ -7,7 +8,7 @@
 ;   querying the board and moving pieces about
 
 (def origin "origin of the board addressing system — see doc/grid.png"
-  (position/create 0 0))
+  position/origin)
 
 (def create "initialize an empty board with no pieces"
   {:pieces {}})
@@ -140,7 +141,6 @@
 
 (defn generate-can-slide-lookup-table [seed] "generate can-slide-lookup-table from only unique configurations, by rotation"
   (let [
-    rotate-string-left (fn [s] (str (apply str (rest s)) (first s)))
     rotate-seed-pair-left (fn [[seed-key seed-val]] [(rotate-string-left seed-key) (rotate-string-left seed-val)])
     all-rotations-of-pair (fn [seed-pair]
       (rest (reduce

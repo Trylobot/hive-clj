@@ -23,6 +23,8 @@
                (and (odd?  row) (odd?  col)) )]}
     {:row row, :col col})
 
+(def origin (create 0 0))
+
 (defn translation "return result of applying direction vector to position"
   [position direction]
     {:pre [(map? position)
