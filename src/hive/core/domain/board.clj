@@ -225,8 +225,8 @@
 
 (defn lookup-slide-destinations "return a list of possible destinations that can be reached from a given starting position by only sliding"
   ([board start-position]
-    (lookup-slide-destinations board (list start-position) #{} #{}) )
-  ([board to-visit visited destinations]
+    (lookup-slide-destinations board start-position (list start-position) #{} #{}) )
+  ([board start-position to-visit visited destinations]
     (if (empty? to-visit)
       destinations
       (let [cursor (first to-visit)
@@ -235,8 +235,9 @@
               #(not (contains? visited %)) 
               (apply conj (rest to-visit) slide-destinations))
             new-visited (conj visited cursor)
-            new-destinations (apply conj destinations slide-destinations)]
-        (recur board new-to-visit new-visited new-destinations))) ))
+            new-destinations (apply conj destinations 
+              (filter #(not (= start-position %)) slide-destinations))]
+        (recur board start-position new-to-visit new-visited new-destinations))) ))
 
 
 

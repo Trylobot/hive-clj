@@ -482,9 +482,11 @@
         {:row -3, :col -1}
         {:row -1, :col -1}}
       (board/lookup-slide-destinations
-        {:pieces {{:row 0,  :col 0} [{:color :white, :type :spider}] 
-                  {:row -2, :col 0} [{:color :white, :type :queen-bee}, 
-                                     {:color :black, :type :beetle}] }}
+        (board/remove-piece 
+          {:pieces {{:row 0,  :col 0} [{:color :white, :type :spider}] 
+                    {:row -2, :col 0} [{:color :white, :type :queen-bee}, 
+                                       {:color :black, :type :beetle}] }}
+          {:row 0, :col 0})
         {:row 0, :col 0}) )))
 
 )
