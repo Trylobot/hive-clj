@@ -65,7 +65,7 @@
       :cw (rotation-clockwise direction)
       :ccw (rotation-counter-clockwise direction)) )
 
-(defn adjacencies "return list of positions representing the immediate adjacencies of position"
+(defn adjacencies "return set of positions representing the immediate adjacencies of position"
   [position]
-    (map #(translation position %) direction-vectors))
+    (set (map #(translation position %) direction-vectors)))
 

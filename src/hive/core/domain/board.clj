@@ -1,5 +1,5 @@
 (ns hive.core.domain.board)
-(require '[hive.core.util :refer :all])
+(use 'hive.core.util)
 (require '[hive.core.domain.position :as position])
 (require '[hive.core.domain.piece :as piece])
 
@@ -225,8 +225,16 @@
 
 (defn search-free-spaces "return set of open spaces with adjacencies of only the specified color"
   [board color-filter]
-    (let [occupied-positions (keys (:pieces board))]
-      (map #(%) occupied-positions) ))
+    (let [pieces (:pieces board)
+          potentials (map position/adjacencies (keys pieces))]
+      (set (filter (fn [potential]
+        (let [is-empty (nil? (get pieces potential))
+              adjacencies (lookup-adjacent-positions board potential)
+              colors (map #(:color (last (:contents %))) adjacencies)
+              passes-filter (map #(or (nil? %) (= color-filter %)) colors)
+              all-pass (reduce #(and %1 %2) passes-filter)]
+          (and is-empty all-pass)))
+        potentials)) ))
 
 (defn lookup-slide-destinations "return set of possible destinations that can be reached from a given starting position by only sliding"
   ([board start-position]

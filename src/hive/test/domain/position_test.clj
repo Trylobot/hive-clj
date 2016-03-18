@@ -40,7 +40,7 @@
 
   (testing "adjacencies of -5,-1"
     (is (=
-      '({:row -7, :col -1} {:row -6, :col 0} {:row -4, :col 0} {:row -3, :col -1} {:row -4, :col -2} {:row -6, :col -2})
+      #{{:row -7, :col -1} {:row -6, :col 0} {:row -4, :col 0} {:row -3, :col -1} {:row -4, :col -2} {:row -6, :col -2}}
       (position/adjacencies {:row -5, :col -1}) )))
 
 )(deftest rotation-test

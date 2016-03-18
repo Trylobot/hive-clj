@@ -472,6 +472,16 @@
         {:row 1, :col -1} [{:color :black, :type :soldier-ant}]
         {:row -1, :col -1} [{:color :black, :type :soldier-ant}] }} {:row 0, :col 0}) )))
 
+)(deftest search-free-spaces-test
+  
+  (testing "search-free-spaces, small board"
+    (is (=
+      #{{:row -2, :col 0} {:row -1, :col 1}}
+      {:pieces {
+        {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+        {:row 2, :col 0} [{:color :black, :type :grasshopper}]
+        {:row 1, :col -1} [{:color :black, :type :grasshopper}] }} )))
+  
 )(deftest lookup-slide-destinations-test
 
   (testing "lookup-slide-destinations, small board"
