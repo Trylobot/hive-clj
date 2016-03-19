@@ -477,10 +477,10 @@
   (testing "search-free-spaces, small board"
     (is (=
       #{{:row -2, :col 0} {:row -1, :col 1}}
-      {:pieces {
+      (board/search-free-spaces {:pieces {
         {:row 0, :col 0} [{:color :white, :type :queen-bee}]
         {:row 2, :col 0} [{:color :black, :type :grasshopper}]
-        {:row 1, :col -1} [{:color :black, :type :grasshopper}] }} )))
+        {:row 1, :col -1} [{:color :black, :type :grasshopper}] }} :white) )))
   
 )(deftest lookup-slide-destinations-test
 

@@ -1,4 +1,5 @@
 (ns hive.core.domain.board)
+(require '[clojure.set :as set])
 (use 'hive.core.util)
 (require '[hive.core.domain.position :as position])
 (require '[hive.core.domain.piece :as piece])
@@ -226,11 +227,11 @@
 (defn search-free-spaces "return set of open spaces with adjacencies of only the specified color"
   [board color-filter]
     (let [pieces (:pieces board)
-          potentials (map position/adjacencies (keys pieces))]
+          potentials (apply set/union (map position/adjacencies (keys pieces)))]
       (set (filter (fn [potential]
         (let [is-empty (nil? (get pieces potential))
               adjacencies (lookup-adjacent-positions board potential)
-              colors (map #(:color (last (:contents %))) adjacencies)
+              colors (map #(:color (last (:contents %))) (vals adjacencies))
               passes-filter (map #(or (nil? %) (= color-filter %)) colors)
               all-pass (reduce #(and %1 %2) passes-filter)]
           (and is-empty all-pass)))
