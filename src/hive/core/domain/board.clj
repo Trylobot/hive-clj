@@ -261,7 +261,24 @@
         position
         (recur board position direction)) ))
 
-
+(defn contiguous? "return whether the board is one contiguous group"
+  ([board]
+    (let [occupied (set (keys (:pieces board)))
+          frontier (conj #{} (first occupied))
+          unexplored (set (rest occupied))]
+      (if (empty? occupied)
+        true
+        (contiguous? occupied frontier unexplored)) ))
+  ([occupied frontier unexplored]
+    (if (= frontier occupied)
+      true
+      (let [expansion (set/difference (reduce set/union #{} (map position/adjacencies frontier)) frontier)
+            frontier-additions (set/intersection expansion unexplored)
+            new-frontier (set/union frontier frontier-additions)
+            new-unexplored (set/difference unexplored frontier-additions)]
+        (if (= unexplored new-unexplored)
+          false
+          (recur occupied new-frontier new-unexplored)) ))) )
 
 
 

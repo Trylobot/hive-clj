@@ -513,4 +513,32 @@
         {:row 0, :col 0} 
         120) )))
 
+)(deftest contiguous?-test
+  
+  (testing "contiguous?, empty board"
+    (is (=
+      true
+      (board/contiguous? {:pieces nil}) )))
+
+  (testing "contiguous?, one piece"
+    (is (=
+      true
+      (board/contiguous? {:pieces {
+        {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}) )))
+
+  (testing "contiguous?, three pieces, single group"
+    (is (=
+      true
+      (board/contiguous? {:pieces {
+        {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+        {:row 2, :col 0} [{:color :black, :type :grasshopper}]
+        {:row 1, :col -1} [{:color :black, :type :grasshopper}] }}) )))
+
+  (testing "contiguous?, two pieces, two groups"
+    (is (=
+      false
+      (board/contiguous? {:pieces {
+        {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+        {:row 4, :col 0} [{:color :black, :type :grasshopper}] }}) )))
+
 )
