@@ -499,4 +499,18 @@
           {:row 0, :col 0})
         {:row 0, :col 0}) )))
 
+)(deftest find-free-space-in-direction-test
+  
+  (testing "find-free-space-in-direction, small board"
+    (is (=
+      {:row 2, :col 2}
+      (board/find-free-space-in-direction 
+        (board/remove-piece 
+          {:pieces {
+            {:row 0, :col 0} [{:color :black, :type :grasshopper}]
+            {:row 1, :col 1} [{:color :white, :type :queen-bee}] }} 
+          {:row 0, :col 0}) 
+        {:row 0, :col 0} 
+        120) )))
+
 )

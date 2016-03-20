@@ -253,7 +253,13 @@
               (filter #(not (= start-position %)) slide-destinations))]
         (recur board start-position new-to-visit new-visited new-destinations))) ))
 
-
+(defn find-free-space-in-direction "find the first non-occupied space in the given direction from position"
+  [board position direction]
+    (let [pieces (:pieces board)
+          position (position/translation position direction)]
+      (if (nil? (get pieces position))
+        position
+        (recur board position direction)) ))
 
 
 
