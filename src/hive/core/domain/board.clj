@@ -289,19 +289,25 @@
       default-range
     (number? r) ; 3 --> {:min 3, :max 3}
       {:min r, :max r}
-    (and (vector? r) (= 2 (count r)) (number? (nth r 0)) (number? (nth r 1))) ; [0, 3] --> {:min 0, :max 3}
+    (and (vector? r)
+         (= 2 (count r))
+         (number? (nth r 0))
+         (number? (nth r 1))) ; [0, 3] --> {:min 0, :max 3}
       {:min (nth r 0), :max (nth r 1)}
-    (and (map? r) (contains? :min) (contains? :max)) ; {:min 0, :max 3} --> identity
+    (and (map? r)
+         (contains? r :min)
+         (contains? r :max)) ; {:min 0, :max 3} --> identity
       r ))
 
 (defn is-range-seq? "is the given value a sequence of simple ranges? if so, return the normalized forms of each; gaps filled by default"
   [s, d] (cond
-    (and (or (vector? s) (seq? s)) (= d (count s)))
+    (or (nil? s) (number? s))
+      (mapv (fn [i] (is-range? s)) (range d))
+    (and (or (vector? s) (seq? s)) 
+         (= d (count s)))
       (mapv #(is-range? %) s)
-    (number? s)
-      (mapv #(is-range? s) (range d))
     (is-range? s)
-      (mapv #(s) (range d)) ))
+      (mapv (fn [i] s) (range d)) ))
 
 (defn find-unique-paths-matching-conditions "find paths from start position matching length and height restrictions"
   [board start-position distance-range height-range]

@@ -560,4 +560,33 @@
         {:row 1, :col -1} [{:color :black, :type :spider}]
         {:row -1, :col -1} [{:color :black, :type :beetle}] }}) )))
 
+)(deftest is-range?-test
+  
+  (testing "is-range?, nil"
+    (is (=
+      {:min 0, :max :infinity}
+      (board/is-range? nil) )))
+
+  (testing "is-range?, nil"
+    (is (=
+      {:min 3, :max 3}
+      (board/is-range? 3) )))
+
+  (testing "is-range?, nil"
+    (is (=
+      {:min 0, :max 3}
+      (board/is-range? [0 3]) )))
+
+  (testing "is-range?, nil"
+    (is (=
+      {:min 0, :max 3}
+      (board/is-range? {:min 0, :max 3}) )))
+
+)(deftest is-range-seq?-test
+  
+  (testing "is-range-seq?, nil 3"
+    (is (=
+      [{:min 0, :max :infinity}, {:min 0, :max :infinity}, {:min 0, :max :infinity}]
+      (board/is-range-seq? nil 3) )))
+
 )
