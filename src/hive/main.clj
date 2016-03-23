@@ -1,5 +1,6 @@
 (ns hive.main (:gen-class))
 
+(use 'hive.core.util)
 (require '[hive.core.domain.position :as position])
 (require '[hive.core.domain.piece :as piece])
 (require '[hive.core.domain.board :as board])
@@ -8,6 +9,7 @@
 (require '[hive.core.schema.board-schema :as board-schema])
 
 (require 'clojure.test)
+(require 'hive.test.util-test)
 (require 'hive.test.domain.board-test)
 (require 'hive.test.domain.position-test)
 (require 'hive.test.schema.board-schema-test)

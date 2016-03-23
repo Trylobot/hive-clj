@@ -300,14 +300,21 @@
       r ))
 
 (defn is-range-seq? "is the given value a sequence of simple ranges? if so, return the normalized forms of each; gaps filled by default"
-  [s, d] (cond
-    (or (nil? s) (number? s))
+  ([s] (cond
+    (or (vector? s) (seq? s))
+      (mapv #(is-range? %) s) ))
+  ([s, d] (cond
+    (or (nil? s) 
+        (number? s)
+        (and (vector? s)
+             (= 2 (count s))
+             (number? (nth s 0))
+             (number? (nth s 1)) ) )
       (mapv (fn [i] (is-range? s)) (range d))
-    (and (or (vector? s) (seq? s)) 
-         (= d (count s)))
-      (mapv #(is-range? %) s)
+    (or (vector? s) (seq? s))
+      (mapv #(is-range? %) (fill s d default-range))
     (is-range? s)
-      (mapv (fn [i] s) (range d)) ))
+      (mapv (fn [i] s) (range d)) )) )
 
 (defn find-unique-paths-matching-conditions "find paths from start position matching length and height restrictions"
   [board start-position distance-range height-range]

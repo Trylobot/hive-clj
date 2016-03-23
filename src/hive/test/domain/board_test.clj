@@ -584,9 +584,39 @@
 
 )(deftest is-range-seq?-test
   
-  (testing "is-range-seq?, nil 3"
+  (testing "is-range-seq?, vector of nils"
+    (is (=
+      [{:min 0, :max :infinity}, {:min 0, :max :infinity}, {:min 0, :max :infinity}]
+      (board/is-range-seq? [nil nil nil]) )))
+
+  (testing "is-range-seq?, vector of numbers (aka simple-range)"
+    (is (=
+      [{:min 3, :max 3}, {:min 3, :max 3}, {:min 3, :max 3}]
+      (board/is-range-seq? [3 3 3]) )))
+
+  (testing "is-range-seq?, vector of simple-ranges"
+    (is (=
+      [{:min 0, :max 3}, {:min 0, :max 3}, {:min 0, :max 3}]
+      (board/is-range-seq? [[0 3] [0 3] [0 3]]) )))
+
+  (testing "is-range-seq?, list of maps (aka normalized simple-ranges)"
+    (is (=
+      [{:min 0, :max 3}, {:min 0, :max 3}, {:min 0, :max 3}]
+      (board/is-range-seq? '({:min 0, :max 3}, {:min 0, :max 3}, {:min 0, :max 3})) )))
+
+  (testing "is-range-seq?, nil (x 3)"
     (is (=
       [{:min 0, :max :infinity}, {:min 0, :max :infinity}, {:min 0, :max :infinity}]
       (board/is-range-seq? nil 3) )))
+
+  (testing "is-range-seq?, 3 (x 3)"
+    (is (=
+      [{:min 3, :max 3}, {:min 3, :max 3}, {:min 3, :max 3}]
+      (board/is-range-seq? 3 3) )))
+
+  (testing "is-range-seq?, simple-range (x 3)"
+    (is (=
+      [{:min 0, :max 3}, {:min 0, :max 3}, {:min 0, :max 3}]
+      (board/is-range-seq? [0 3] 3) )))
 
 )
