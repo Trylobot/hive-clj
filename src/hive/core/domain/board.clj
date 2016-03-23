@@ -282,11 +282,15 @@
           false
           (recur occupied new-frontier new-unexplored)) ))) )
 
+(defn create-path-node "intermediate structure for caching information about path steps"
+  [position parent-node]
+    nil )
+
 (defn find-unique-paths-matching-conditions "find paths from start position matching length and height restrictions"
-  [board start-position distance-range height-range]
+  ([board start-position distance-range height-range]
     {:pre [(range/is-range? distance-range)
            (range/is-range-seq? height-range)]}
-     )
+     ))
 
 
 
