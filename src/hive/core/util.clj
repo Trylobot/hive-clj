@@ -17,5 +17,5 @@
         (apply conj coll 
           (mapv (fn [i] v) (range (- s len))))
       (> len s) ; truncate
-        (subvec coll 0 (vec s)) )) )
+        (subvec (vec coll) 0 s) )) )
 
