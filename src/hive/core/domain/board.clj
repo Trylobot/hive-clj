@@ -280,6 +280,13 @@
           false
           (recur occupied new-frontier new-unexplored)) ))) )
 
+(defn is-range? "is the given value a valid hive range value? if so, return it in normalized form"
+  [r]
+    true )
+
+(defn find-unique-paths-matching-conditions "find paths from start position matching length and height restrictions"
+  [board start-position distance-range height-range]
+    nil )
 
 
 
