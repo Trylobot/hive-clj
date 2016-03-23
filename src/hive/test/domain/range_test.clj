@@ -9,20 +9,30 @@
       {:min 0, :max :infinity}
       (range/is-range? nil) )))
 
-  (testing "is-range?, nil"
+  (testing "is-range?, number"
     (is (=
       {:min 3, :max 3}
       (range/is-range? 3) )))
 
-  (testing "is-range?, nil"
+  (testing "is-range?, vector of two numbers"
     (is (=
       {:min 0, :max 3}
       (range/is-range? [0 3]) )))
 
-  (testing "is-range?, nil"
+  (testing "is-range?, map with :min,:max"
     (is (=
       {:min 0, :max 3}
       (range/is-range? {:min 0, :max 3}) )))
+
+  (testing "is-range?, vector of two numbers, out of order"
+    (is (=
+      {:min 0, :max 3}
+      (range/is-range? [3 0]) )))
+
+  (testing "is-range?, map with :min,:max, out of order"
+    (is (=
+      {:min 0, :max 3}
+      (range/is-range? {:min 3, :max 0}) )))
 
 )(deftest is-range-seq?-test
   

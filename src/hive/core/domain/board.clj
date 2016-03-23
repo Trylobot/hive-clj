@@ -3,6 +3,7 @@
 (use 'hive.core.util)
 (require '[hive.core.domain.position :as position])
 (require '[hive.core.domain.piece :as piece])
+(require '[hive.core.domain.range :as range])
 
 ; board
 ;   for dealing with hive board states
@@ -155,7 +156,8 @@
       can-slide-lookup-table-seed ; both the initial value to expand, and the destination for the result
       can-slide-lookup-table-seed) ))
 
-(def can-slide-lookup-table (generate-can-slide-lookup-table can-slide-lookup-table-seed))
+(def can-slide-lookup-table 
+  (generate-can-slide-lookup-table can-slide-lookup-table-seed))
 
 (defn encode-slide-lookup-key-from-adjacencies "transform a list of adjacency descriptors into a can-slide table lookup key"
   [position-adjacencies]
@@ -282,7 +284,9 @@
 
 (defn find-unique-paths-matching-conditions "find paths from start position matching length and height restrictions"
   [board start-position distance-range height-range]
-    nil )
+    {:pre [(range/is-range? distance-range)
+           (range/is-range-seq? height-range)]}
+     )
 
 
 
