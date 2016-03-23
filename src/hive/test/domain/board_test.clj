@@ -541,4 +541,23 @@
         {:row 0, :col 0} [{:color :white, :type :queen-bee}]
         {:row 4, :col 0} [{:color :black, :type :grasshopper}] }}) )))
 
+  (testing "contiguous?, small C-shape"
+    (is (=
+      true
+      (board/contiguous? {:pieces {
+        {:row -1, :col 1} [{:color :black, :type :soldier-ant}]
+        {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
+        {:row 2, :col 0} [{:color :black, :type :spider}]
+        {:row 1, :col -1} [{:color :black, :type :spider}]
+        {:row -1, :col -1} [{:color :black, :type :beetle}] }}) )))
+
+  (testing "contiguous?, small pair of pairs"
+    (is (=
+      false
+      (board/contiguous? {:pieces {
+        {:row -1, :col 1} [{:color :black, :type :soldier-ant}]
+        {:row 1, :col 1} [{:color :black, :type :soldier-ant}]
+        {:row 1, :col -1} [{:color :black, :type :spider}]
+        {:row -1, :col -1} [{:color :black, :type :beetle}] }}) )))
+
 )
