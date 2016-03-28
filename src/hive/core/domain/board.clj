@@ -283,14 +283,54 @@
           (recur occupied new-frontier new-unexplored)) ))) )
 
 (defn create-path-node "intermediate structure for caching information about path steps"
-  [position parent-node]
-    nil )
+  [position parent-node] 
+    (let [parent-length (:path-length parent-node)]
+      { :position position
+        :parent parent-node
+        :path-length (if parent-length (inc parent-length) 1) } ))
 
-(defn find-unique-paths-matching-conditions "find paths from start position matching length and height restrictions"
-  ([board start-position distance-range height-range]
-    {:pre [(range/is-range? distance-range)
-           (range/is-range-seq? height-range)]}
-     ))
+(defn path-contains-position? "intermediate function to check if a position is already contained in a path"
+  [path-node position]
+    (if (= position (:position path-node))
+      true
+      (if (not (:parent path-node))
+        false
+        (recur (:parent path-node) position)) ) )
+
+(defn find-adjacent-path-nodes "find all adjacent moves from position matching height limits"
+  [board path-node height-range]
+    (let [height-range (range/is-range? height-range)
+          node-height (lookup-piece-stack-height board (:position path-node))
+          slide-positions (if (and (zero? node-height) (= (:min height-range) 0)) 
+            (lookup-adjacent-slide-positions board (:position path-node)) nil)
+          climb-positions (if (or (> node-height 0) (> (:max height-range) 0)) 
+            (lookup-adjacent-climb-positions board (:position path-node)) nil)
+          adjacencies (reduce set/union slide-positions climb-positions)
+          is-valid-adjacency? (fn [adjacent-position] 
+              (let [adjacency-height (lookup-piece-stack-height board adjacent-position)]
+                (and (>= adjacency-height (:min height-range))
+                     (<= adjacency-height (:max height-range))
+                     (not (path-contains-position? path-node adjacent-position)) )))
+          valid-adjacencies (filter is-valid-adjacency? adjacencies)
+          new-path-nodes (set (map #(create-path-node % path-node) valid-adjacencies))]
+      new-path-nodes ))
+
+(defn find-unique-paths-matching-conditions "find all unique paths from start-position matching required length and within height limits"
+  ([board start-position distance-range height-range-seq]
+    (let [distance-range (range/is-range? distance-range)
+          height-range-seq (range/is-range-seq? height-range-seq)
+          root-node (create-path-node start-position nil)]
+      (find-unique-paths-matching-conditions
+        board start-position distance-range height-range-seq #{root-node} #{} 1) ))
+  ([board start-position distance-range height-range-seq branch-nodes leaf-nodes distance]
+    (if (or (>= distance (:max distance-range)) (empty? branch-nodes))
+      () ; TODO all potential paths exhausted, process accumulated data
+      (let [height-range (get height-range-seq distance)
+            new-path-nodes (zipmap branch-nodes 
+              (map #(find-unique-path-nodes board % height-range) branch-nodes))
+            new-branch-nodes (reduce #(%) branch-node-scans) ; TODO
+            new-leaf-nodes (reduce #(%) branch-node-scans)] ; TODO
+        (recur board start-position distance-range height-range-seq new-branch-nodes new-leaf-nodes (inc distance)) ))) )
 
 
 
