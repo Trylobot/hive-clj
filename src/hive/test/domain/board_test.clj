@@ -560,4 +560,13 @@
         {:row 1, :col -1} [{:color :black, :type :spider}]
         {:row -1, :col -1} [{:color :black, :type :beetle}] }}) )))
 
+)(deftest find-unique-paths-matching-conditions-test
+  
+  (testing "find-unique-paths-matching-conditions, spider movement around single piece"
+    (is (=
+      { {:row 2, :col 0} '({:row -1, :col -1} {:row 1, :col -1} {:row 2, :col 0}) }
+      (board/find-unique-paths-matching-conditions 
+        {:pieces { {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}
+        {:row -2, :col 0} 3 [0 0 0]) )))
+
 )

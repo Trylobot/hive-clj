@@ -315,6 +315,14 @@
           new-path-nodes (set (map #(create-path-node % path-node) valid-adjacencies))]
       new-path-nodes ))
 
+(defn trace-path "create a list of positions from root (exclusive) to given path node [inclusive] by traversing via parents"
+  ([path-node]
+    (trace-path path-node (list (:position path-node))))
+  ([path-node position-list]
+    (if (not (:parent path-node))
+      position-list
+      (recur (:parent path-node) (conj position-list (:position (:parent path-node)))) )) )
+
 (defn find-unique-paths-matching-conditions "find all unique paths from start-position matching required length and within height limits"
   ([board start-position distance-range height-range-seq]
     (let [distance-range (range/is-range? distance-range)
@@ -324,12 +332,28 @@
         board start-position distance-range height-range-seq #{root-node} #{} 1) ))
   ([board start-position distance-range height-range-seq branch-nodes leaf-nodes distance]
     (if (or (>= distance (:max distance-range)) (empty? branch-nodes))
-      () ; TODO all potential paths exhausted, process accumulated data
+      (let [potential-paths-terminal-nodes (filter (fn [path-node] 
+              (and (<= (:path-length path-node) (:max distance-range)) 
+                   (>= (:path-length path-node) (:min distance-range))) ) (set/union branch-nodes leaf-nodes))
+            unique-paths (zipmap
+              (map :position potential-paths-terminal-nodes)
+              (map trace-path potential-paths-terminal-nodes))]
+            unique-paths)
       (let [height-range (get height-range-seq distance)
             new-path-nodes (zipmap branch-nodes 
-              (map #(find-unique-path-nodes board % height-range) branch-nodes))
-            new-branch-nodes (reduce #(%) branch-node-scans) ; TODO
-            new-leaf-nodes (reduce #(%) branch-node-scans)] ; TODO
+              (map #(find-adjacent-path-nodes board % height-range) branch-nodes))
+            new-leaf-nodes (reduce 
+              (fn [result [path-node adjacent-nodes]]
+                (if (empty? adjacent-nodes)
+                  (conj result path-node)
+                  result) ) 
+              #{} new-path-nodes)
+            new-branch-nodes (reduce 
+              (fn [result [path-node adjacent-nodes]] 
+                (if (not (empty? adjacent-nodes))
+                  (set/union result adjacent-nodes)
+                  result) )
+              #{} new-path-nodes)]
         (recur board start-position distance-range height-range-seq new-branch-nodes new-leaf-nodes (inc distance)) ))) )
 
 
