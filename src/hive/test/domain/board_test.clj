@@ -560,6 +560,56 @@
         {:row 1, :col -1} [{:color :black, :type :spider}]
         {:row -1, :col -1} [{:color :black, :type :beetle}] }}) )))
 
+)(deftest create-path-node-test
+  
+  (testing "create-path-node, root"
+    (is (=
+      {:position {:row 0, :col 0}, :parent nil, :path-length 1}
+      (board/create-path-node {:row 0, :col 0} nil) )))
+
+  (testing "create-path-node, path-length 3"
+    (is (=
+      3
+      (:path-length (->> nil
+        (board/create-path-node {:row 0, :col 0}) 
+        (board/create-path-node {:row 2, :col 0})
+        (board/create-path-node {:row 3, :col 1}) )) )))
+
+)(deftest path-contains-position?-test
+
+  (testing "path-contains-position? for path that SHOULD"
+    (is (=
+      true
+      (board/path-contains-position? (->> nil
+        (board/create-path-node {:row 0, :col 0})
+        (board/create-path-node {:row 2, :col 0})
+        (board/create-path-node {:row 3, :col 1}) )
+        {:row 2, :col 0}) )))
+
+  (testing "path-contains-position? for path that should NOT"
+    (is (=
+      false
+      (board/path-contains-position? (->> nil
+        (board/create-path-node {:row 0, :col 0})
+        (board/create-path-node {:row 2, :col 0})
+        (board/create-path-node {:row 3, :col 1}) )
+        {:row -2, :col -2}) )))
+
+)(deftest find-adjacent-path-nodes-test
+
+  (testing "find-adjacent-path-nodes, spider movement around single piece"
+    (is (=
+      #{ {:position {:row 1, :col 1}, :parent {:position {:row 2, :col 0}, :parent nil, :path-length 0}, :path-length 1}
+         {:position {:row 1, :col -1}, :parent {:position {:row 2, :col 0}, :parent nil, :path-length 0}, :path-length 1} }
+      (board/find-adjacent-path-nodes
+        {:pieces { {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}
+        {:position {:row 2, :col 0}, :parent nil, :path-length 0}
+        0) )))
+
+)(deftest trace-path-test
+
+
+
 )(deftest find-unique-paths-matching-conditions-test
   
   (testing "find-unique-paths-matching-conditions, spider movement around single piece"
