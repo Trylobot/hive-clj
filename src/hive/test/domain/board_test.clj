@@ -618,15 +618,13 @@
 )(deftest find-unique-paths-matching-conditions-test
   
   (testing "find-unique-paths-matching-conditions, spider movement around single piece"
-    (let [result (board/find-unique-paths-matching-conditions 
-        {:pieces { {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}
-        {:row -2, :col 0} 3 [0 0 0]) ]
       ; either path is equally acceptable and it is not defined which one will be chosen
-      (is (or 
-        (= {{:row 2, :col 0} '({:row -2, :col 0} {:row -1, :col -1} {:row 1, :col -1} {:row 2, :col 0})}
-          result)
-        (= {{:row 2, :col 0} '({:row -2, :col 0} {:row -1, :col 1} {:row 1, :col 1} {:row 2, :col 0})}
-          result) )) ))
+      (is (contains? 
+        #{ {{:row 2, :col 0} '({:row -2, :col 0} {:row -1, :col -1} {:row 1, :col -1} {:row 2, :col 0})}
+           {{:row 2, :col 0} '({:row -2, :col 0} {:row -1, :col 1} {:row 1, :col 1} {:row 2, :col 0})} }
+        (board/find-unique-paths-matching-conditions 
+          {:pieces { {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}
+          {:row -2, :col 0} 3 [0 0 0]) )) )
 
 
 )
