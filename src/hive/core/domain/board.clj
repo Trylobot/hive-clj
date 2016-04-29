@@ -287,7 +287,7 @@
     (let [parent-length (:path-length parent-node)]
       { :position position
         :parent parent-node
-        :path-length (if parent-length (inc parent-length) 1) } ))
+        :path-length (if parent-length (inc parent-length) 0) } ))
 
 (defn path-contains-position? "intermediate function to check if a position is already contained in a path"
   [path-node position]
@@ -308,14 +308,13 @@
           adjacencies (reduce set/union slide-positions climb-positions)
           is-valid-adjacency? (fn [adjacent-position] 
               (let [adjacency-height (lookup-piece-stack-height board adjacent-position)]
-                (and (>= adjacency-height (:min height-range))
-                     (<= adjacency-height (:max height-range))
+                (and (range/r-contains? height-range adjacency-height)
                      (not (path-contains-position? path-node adjacent-position)) )))
           valid-adjacencies (filter is-valid-adjacency? adjacencies)
           new-path-nodes (set (map #(create-path-node % path-node) valid-adjacencies))]
       new-path-nodes ))
 
-(defn trace-path "create a list of positions from root (exclusive) to given path node [inclusive] by traversing via parents"
+(defn trace-path "create a list of positions from root [inclusive] to given path node [inclusive] by traversing a path graph from given leaf to its root"
   ([path-node]
     (trace-path path-node (list (:position path-node))))
   ([path-node position-list]
@@ -329,12 +328,14 @@
           height-range-seq (range/is-range-seq? height-range-seq)
           root-node (create-path-node start-position nil)]
       (find-unique-paths-matching-conditions
-        board start-position distance-range height-range-seq #{root-node} #{} 1) ))
+        board start-position distance-range height-range-seq #{root-node} #{} 0) ))
   ([board start-position distance-range height-range-seq branch-nodes leaf-nodes distance]
+    ; (prn (map :position branch-nodes) (map :position leaf-nodes) distance)
     (if (or (>= distance (:max distance-range)) (empty? branch-nodes))
-      (let [potential-paths-terminal-nodes (filter (fn [path-node] 
-              (and (<= (:path-length path-node) (:max distance-range)) 
-                   (>= (:path-length path-node) (:min distance-range))) ) (set/union branch-nodes leaf-nodes))
+      (let [potential-paths-terminal-nodes (filter
+              (fn [path-node] 
+                (range/r-contains? distance-range (:path-length path-node)) )
+              (set/union branch-nodes leaf-nodes) )
             unique-paths (zipmap
               (map :position potential-paths-terminal-nodes)
               (map trace-path potential-paths-terminal-nodes))]

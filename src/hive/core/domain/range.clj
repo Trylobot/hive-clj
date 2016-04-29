@@ -4,6 +4,13 @@
 (def default-range "special range that represents no real restrictions"
   {:min 0, :max :infinity})
 
+(defn r-contains? "does r(range) contain n(number)?"
+  [r n]
+    (and (or (= :infinity (:max r))
+             (<= n (:max r)) )
+         (or (= 0 (:min r))
+             (>= n (:min r)) ) ) )
+
 (defn is-range? "is the given value a simple range? if so, return the normalized form"
   [r] (cond
     (nil? r) ; nil --> {:min 0, :max :infinity}
@@ -19,6 +26,10 @@
          (contains? r :min)
          (contains? r :max)) ; {:min 0, :max 3} --> identity
       {:min (min (:min r) (:max r)), :max (max (:min r) (:max r))} ))
+
+(defn seq-contains? "does s(range-seq) contain n(number) at i(index)?"
+  [s n i]
+    (r-contains? (get s i) n))
 
 (defn is-range-seq? "is the given value a sequence of simple ranges? if so, return the normalized forms of each; gaps filled by default"
   ([s] (cond

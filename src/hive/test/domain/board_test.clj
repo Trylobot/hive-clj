@@ -564,12 +564,12 @@
   
   (testing "create-path-node, root"
     (is (=
-      {:position {:row 0, :col 0}, :parent nil, :path-length 1}
+      {:position {:row 0, :col 0}, :parent nil, :path-length 0}
       (board/create-path-node {:row 0, :col 0} nil) )))
 
   (testing "create-path-node, path-length 3"
     (is (=
-      3
+      2
       (:path-length (->> nil
         (board/create-path-node {:row 0, :col 0}) 
         (board/create-path-node {:row 2, :col 0})
@@ -598,23 +598,28 @@
 )(deftest find-adjacent-path-nodes-test
 
   (testing "find-adjacent-path-nodes, spider movement around single piece"
-    (is (=
-      #{ {:position {:row 1, :col 1}, :parent {:position {:row 2, :col 0}, :parent nil, :path-length 0}, :path-length 1}
-         {:position {:row 1, :col -1}, :parent {:position {:row 2, :col 0}, :parent nil, :path-length 0}, :path-length 1} }
-      (board/find-adjacent-path-nodes
-        {:pieces { {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}
-        {:position {:row 2, :col 0}, :parent nil, :path-length 0}
-        0) )))
+    (let [board {:pieces { {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}
+          path-node {:position {:row 2, :col 0}, :parent nil, :path-length 0}]
+      (is (=
+        #{ {:position {:row 1, :col 1}, :parent path-node, :path-length 1}
+           {:position {:row 1, :col -1}, :parent path-node, :path-length 1} }
+        (board/find-adjacent-path-nodes board path-node 0) ))))
 
 )(deftest trace-path-test
 
-
+  (testing "trace-path for simple, contextless, three-node path"
+    (is (=
+      '({:row 0, :col 0} {:row 2, :col 0}, {:row 3, :col 1})
+      (board/trace-path (->> nil
+        (board/create-path-node {:row 0, :col 0})
+        (board/create-path-node {:row 2, :col 0})
+        (board/create-path-node {:row 3, :col 1}) )) )))
 
 )(deftest find-unique-paths-matching-conditions-test
   
   (testing "find-unique-paths-matching-conditions, spider movement around single piece"
     (is (=
-      { {:row 2, :col 0} '({:row -1, :col -1} {:row 1, :col -1} {:row 2, :col 0}) }
+      { {:row 2, :col 0} '({:row -2, :col 0} {:row -1, :col -1} {:row 1, :col -1} {:row 2, :col 0}) }
       (board/find-unique-paths-matching-conditions 
         {:pieces { {:row 0, :col 0} [{:color :white, :type :queen-bee}] }}
         {:row -2, :col 0} 3 [0 0 0]) )))
