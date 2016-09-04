@@ -173,9 +173,15 @@
 ;   that it is in direct contact with on each step of its move. It may not move
 ;   across to a piece that it is not in direct contact with.
 
+  // return all paths of length 3 that traverse slideable free spaces
+  var distance_range = 3;
+  var height_range_specification = 0;
+  var valid_paths = board.find_unique_paths_matching_conditions( position, distance_range, height_range_specification )
+  return valid_paths.destinations;
+
 (defn find-valid-movement-spider "get movement for position by the rules of the spider"
   [board position]
-     )
+    (board/find-unique-paths-matching-conditions board position 3 0))
 
 ; Soldier Ant
 ;   The Soldier Ant can move from its position to any other position around the
