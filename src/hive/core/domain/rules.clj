@@ -189,7 +189,7 @@
 
 (defn find-valid-movement-soldier-ant "get movement for position by the rules of the soldier-ant"
   [board position]
-     )
+    (board/lookup-slide-destinations board position))
 
 ; Mosquito
 ;   The Mosquito is placed in the same way as the other pieces. Once in play, the
@@ -205,11 +205,30 @@
 
 (defn find-valid-movement-mosquito "get movement for position by the rules of the mosquito"
   [board position]
-     )
+    (if (> (board/lookup-piece-stack-height position) 1)
+      (find-valid-movement-beetle board position)
+      (set (mapcat identity (map (fn [piece-type] 
+        (case piece-type
+          :queen-bee   (find-valid-movement-queen-bee board position)
+          :beetle      (find-valid-movement-beetle board position)
+          :grasshopper (find-valid-movement-grasshopper board position)
+          :spider      (find-valid-movement-spider board position)
+          :soldier-ant (find-valid-movement-soldier-ant board position)
+          :mosquito    nil
+          :ladybug     (find-valid-movement-ladybug board position)
+          :pillbug     (find-valid-movement-pillbug board position)
+          nil )) 
+        (board/lookup-adjacent-piece-types board position)))) ))
 
 (defn find-valid-special-abilities-mosquito "get special abilities for position by the rules of the mosquito"
   [board position turn-history]
-     )
+    (if (> (board/lookup-piece-stack-height position) 1)
+      nil
+      (set (mapcat identity (map (fn [piece-type] 
+        (case piece-type
+          :pillbug     (find-valid-special-abilities-pillbug board position)
+          nil )) 
+        (board/lookup-adjacent-piece-types board position)))) ))
 
 ; Ladybug
 ;   The Ladybug moves three spaces; two on top of the Hive, and then one down.
@@ -221,7 +240,12 @@
 
 (defn find-valid-movement-ladybug "get movement for position by the rules of the ladybug"
   [board position]
-     )
+    (let [distance-spec 3
+          height-spec {
+            "1-2" {:min 1, :max Infinity}
+            "3"   0 }
+          valid-paths (board/find-unique-paths-matching-conditions board position distance-spec height-spec )]
+      (set (keys valid-paths)) ))
 
 ; Pillbug
 ;   The Pillbug moves like the Queen Bee - one space at a time - but it has a
@@ -251,7 +275,7 @@
 
 (defn find-valid-movement-pillbug "get movement for position by the rules of the pillbug"
   [board position]
-     )
+    (board/lookup-adjacent-slide-positions board position) )
 
 (defn find-valid-special-abilities-pillbug "get special abilities for position by the rules of the pillbug"
   [board position turn-history]

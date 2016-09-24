@@ -109,14 +109,27 @@
   [board position]
     (zipmap
       position/direction-vectors
-      (map (fn [direction] (let [
-        adjacent-position (position/translation position direction)
-        piece-stack (lookup-piece-stack board adjacent-position)] {
-          :direction direction
-          :position adjacent-position
-          :height (count piece-stack)
-          :contents piece-stack
-        })) position/direction-vectors) ))
+      (map (fn [direction] 
+        (let [adjacent-position (position/translation position direction)
+              piece-stack (lookup-piece-stack board adjacent-position)] 
+          { :direction direction
+            :position adjacent-position
+            :height (count piece-stack)
+            :contents piece-stack
+          })) 
+        position/direction-vectors) ))
+
+(defn lookup-occupied-adjacencies "return set of occupied adjacencies"
+  [board position]
+    (set (map :position
+      (filter #(:contents %)
+        (vals (lookup-adjacent-positions board position)))) ))
+
+(defn lookup-adjacent-piece-types "lookup neighboring piece types (tops of stacks), as a set"
+  [board position]
+    (set (map 
+      (fn [result] (:type (:last (:contents result)))) 
+      (vals (lookup-adjacent-positions board position)))) )
 
 ; keys represent six spaces adjacent to a theoretical context piece, in the same order as position/direction-vectors
 ;   "1" --> occupied, "." --> not occupied
@@ -220,12 +233,6 @@
          }) positions))
      }} ))
 
-(defn lookup-occupied-adjacencies "return set of occupied adjacencies"
-  [board position]
-    (set (map :position
-      (filter #(:contents %)
-        (vals (lookup-adjacent-positions board position)))) ))
-
 (defn search-free-spaces "return set of open spaces with adjacencies of only the specified color"
   [board color-filter]
     (let [pieces (:pieces board)
@@ -322,7 +329,7 @@
       position-list
       (recur (:parent path-node) (conj position-list (:position (:parent path-node)))) )) )
 
-(defn find-unique-paths-matching-conditions "find all unique paths from start-position matching required length and within height limits"
+(defn find-unique-paths-matching-conditions "find all unique paths from start-position matching required length and within height limits; returns a map of position -> path-node"
   ([board start-position distance-range height-range-seq]
     (let [distance-range (range/is-range? distance-range)
           height-range-seq (range/is-range-seq? height-range-seq)
