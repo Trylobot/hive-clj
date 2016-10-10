@@ -279,7 +279,26 @@
 
 (defn find-valid-special-abilities-pillbug "get special abilities for position by the rules of the pillbug"
   [board position turn-history]
-     )
+    (let [adjacencies (board/lookup-adjacent-positions board position)
+          categorized-adjacencies
+            (reduce (fn [result [direction adjacency]] 
+              (let [stack-cw (get adjacencies (position/rotation-clockwise direction))
+                    stack-ccw (get adjacencies (position/rotation-counter-clockwise direction))]
+                (if (and (<= (:height stack-cw) 1) (<= (:height stack-ccw))) ; piece not sliding through a "gate"
+                  (cond 
+                    (== (:height adjacency) 0) ; empty space
+                      (update-in result [:free] conj (:position adjacency))
+                    (and (== (:height adjacency) 1) (board/check-contiguity (:position adjacency))) ; single piece
+                      (update-in result [:occupied] conj (:position adjacency))
+                    :else
+                      result)
+                  result)
+              )) {:free #{}, :occupied #{}} adjacencies)
+          free-adjacencies (:free categorized-adjacencies)
+          occupied-adjacencies (:occupied categorized-adjacencies)
+          last-turn (last turn-history)
+          valid-occupied-adjacencies (filter #(not= (:destination last-turn) %) occupied-adjacencies)]
+      (zipmap valid-occupied-adjacencies (repeat (count valid-occupied-adjacencies) free-adjacencies)) ))
 
 ; TODO: define a game-state as a schema
 (defn lookup-possible-turns "given a full game state, return all possible next turns"

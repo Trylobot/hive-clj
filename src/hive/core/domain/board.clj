@@ -105,7 +105,7 @@
         (nth stack idx)
         nil) ))
 
-(defn lookup-adjacent-positions "lookup neighboring positions as a directional map"
+(defn lookup-adjacent-positions "lookup neighboring positions. returns a map like  {direction: lookup-result, ...}"
   [board position]
     (zipmap
       position/direction-vectors
