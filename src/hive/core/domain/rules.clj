@@ -71,7 +71,13 @@
 
 (defn check-if-game-over ""
   [board]
-     )
+    (let [queen-search (board/search-pieces nil :queen-bee)
+          queens (map (fn [queen] 
+            (assoc queen :occupied-adjacency-count 
+              (count (board/lookup-occupied-adjacencies board (:position queen))))) queen-search)]
+          ; compare (queens) contents
+          nil
+           ))
 
 ; Unable to Move or Place
 ;   If a player can not place a new piece or move an existing piece, the turn passes
@@ -303,5 +309,5 @@
 ; TODO: define a game-state as a schema
 (defn lookup-possible-turns "given a full game state, return all possible next turns"
   [color board hand turn-number turn-history]
-     )
+    (let [game-over ]) )
 

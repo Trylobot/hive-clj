@@ -65,7 +65,9 @@
         (let [position (first board-position)
               stack (second board-position)]
           (map-indexed (fn [index piece]
-            {:position position, :layer index, :piece piece})
+            { :position position,
+              :layer index, 
+              :piece piece })
             stack) )))
       first
       (filter #(piece/like? (:piece %) color-filter type-filter)) ))
