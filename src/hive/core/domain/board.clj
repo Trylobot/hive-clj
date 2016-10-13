@@ -272,6 +272,7 @@
         position
         (recur board position direction)) ))
 
+; refer to https://en.wikipedia.org/wiki/Disjoint-set_data_structure
 (defn contiguous? "return whether the board is one contiguous group"
   ([board]
     (let [occupied (set (keys (:pieces board)))

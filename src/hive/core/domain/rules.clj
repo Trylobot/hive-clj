@@ -69,15 +69,26 @@
 ;   they are forced to move the same two pieces over and over again, without any possibility
 ;   of the stalemate being resolved.
 
-(defn check-if-game-over ""
+(defn game-over? "describes precisely whether the given board represents a finished game"
   [board]
-    (let [queen-search (board/search-pieces nil :queen-bee)
-          queens (map (fn [queen] 
-            (assoc queen :occupied-adjacency-count 
-              (count (board/lookup-occupied-adjacencies board (:position queen))))) queen-search)]
-          ; compare (queens) contents
-          nil
-           ))
+    (let [directions (count position/direction-vectors)
+          queens (map
+            (fn [queen] 
+              (let [occupied-adjacencies (board/lookup-occupied-adjacencies board (:position queen))]
+                (assoc queen :surrounded (= directions (count occupied-adjacencies))) ))
+            (board/search-pieces board nil :queen-bee))
+          color-test (fn [color] #(= color (:color (:piece %))))
+          white (some (color-test :white) queens)
+          black (some (color-test :black) queens)]
+      (cond
+        (and (:surrounded white) (:surrounded black))
+          {:game-over true,  :is-draw true,  :winner nil} 
+        (:surrounded white) 
+          {:game-over true,  :is-draw false, :winner :black}
+        (:surrounded black)
+          {:game-over true,  :is-draw false, :winner :white}
+        :else
+          {:game-over false, :is-draw false, :winner nil}) ))
 
 ; Unable to Move or Place
 ;   If a player can not place a new piece or move an existing piece, the turn passes
@@ -169,7 +180,7 @@
   [board position]
     (let [adjacent-positions (board/lookup-adjacent-positions board position)
           free-spaces (map (fn [direction]
-            (board/lookup-free-space-in-direction board position direction))
+            (board/find-free-space-in-direction board position direction))
             (keys adjacent-positions))]
       free-spaces ))
 
@@ -178,12 +189,6 @@
 ;   direct path and cannot backtrack on itself. It may only move around pieces
 ;   that it is in direct contact with on each step of its move. It may not move
 ;   across to a piece that it is not in direct contact with.
-
-  // return all paths of length 3 that traverse slideable free spaces
-  var distance_range = 3;
-  var height_range_specification = 0;
-  var valid_paths = board.find_unique_paths_matching_conditions( position, distance_range, height_range_specification )
-  return valid_paths.destinations;
 
 (defn find-valid-movement-spider "get movement for position by the rules of the spider"
   [board position]
@@ -197,45 +202,6 @@
   [board position]
     (board/lookup-slide-destinations board position))
 
-; Mosquito
-;   The Mosquito is placed in the same way as the other pieces. Once in play, the
-;   Mosquito takes on the movement characteristics of any creature it touches at
-;   the time, including your opponents', thus changing its characteristics
-;   throughout the game.
-
-;   Exception: if moved as a Beetle on top of the Hive, it continues to move as
-;   a Beetle until it climbs down from the Hive. If when on the ground level it
-;   is next to a stacked Beetle, it may move as a Beetle and not the piece below
-;   the Beetle. If touching another Mosquito only (including a stacked Mosquito)
-;   and no other piece, it may not move.
-
-(defn find-valid-movement-mosquito "get movement for position by the rules of the mosquito"
-  [board position]
-    (if (> (board/lookup-piece-stack-height position) 1)
-      (find-valid-movement-beetle board position)
-      (set (mapcat identity (map (fn [piece-type] 
-        (case piece-type
-          :queen-bee   (find-valid-movement-queen-bee board position)
-          :beetle      (find-valid-movement-beetle board position)
-          :grasshopper (find-valid-movement-grasshopper board position)
-          :spider      (find-valid-movement-spider board position)
-          :soldier-ant (find-valid-movement-soldier-ant board position)
-          :mosquito    nil
-          :ladybug     (find-valid-movement-ladybug board position)
-          :pillbug     (find-valid-movement-pillbug board position)
-          nil )) 
-        (board/lookup-adjacent-piece-types board position)))) ))
-
-(defn find-valid-special-abilities-mosquito "get special abilities for position by the rules of the mosquito"
-  [board position turn-history]
-    (if (> (board/lookup-piece-stack-height position) 1)
-      nil
-      (set (mapcat identity (map (fn [piece-type] 
-        (case piece-type
-          :pillbug     (find-valid-special-abilities-pillbug board position)
-          nil )) 
-        (board/lookup-adjacent-piece-types board position)))) ))
-
 ; Ladybug
 ;   The Ladybug moves three spaces; two on top of the Hive, and then one down.
 ;   It must move exactly two on top of the Hive and then move one down on its
@@ -248,7 +214,7 @@
   [board position]
     (let [distance-spec 3
           height-spec {
-            "1-2" {:min 1, :max Infinity}
+            "1-2" {:min 1, :max :infinity}
             "3"   0 }
           valid-paths (board/find-unique-paths-matching-conditions board position distance-spec height-spec )]
       (set (keys valid-paths)) ))
@@ -294,7 +260,7 @@
                   (cond 
                     (== (:height adjacency) 0) ; empty space
                       (update-in result [:free] conj (:position adjacency))
-                    (and (== (:height adjacency) 1) (board/check-contiguity (:position adjacency))) ; single piece
+                    (and (== (:height adjacency) 1) (board/contiguous? (:position adjacency))) ; single piece
                       (update-in result [:occupied] conj (:position adjacency))
                     :else
                       result)
@@ -306,8 +272,50 @@
           valid-occupied-adjacencies (filter #(not= (:destination last-turn) %) occupied-adjacencies)]
       (zipmap valid-occupied-adjacencies (repeat (count valid-occupied-adjacencies) free-adjacencies)) ))
 
+; Mosquito
+;   The Mosquito is placed in the same way as the other pieces. Once in play, the
+;   Mosquito takes on the movement characteristics of any creature it touches at
+;   the time, including your opponents', thus changing its characteristics
+;   throughout the game.
+
+;   Exception: if moved as a Beetle on top of the Hive, it continues to move as
+;   a Beetle until it climbs down from the Hive. If when on the ground level it
+;   is next to a stacked Beetle, it may move as a Beetle and not the piece below
+;   the Beetle. If touching another Mosquito only (including a stacked Mosquito)
+;   and no other piece, it may not move.
+
+(defn find-valid-movement-mosquito "get movement for position by the rules of the mosquito"
+  [board position]
+    (if (> (board/lookup-piece-stack-height position) 1)
+      ; mosquito is atop the hive; move like a beetle
+      (find-valid-movement-beetle board position)
+      ; mosquito is at ground-level; move according to adjacent piece types
+      (set (mapcat identity (map (fn [piece-type] 
+        (case piece-type
+          :queen-bee   (find-valid-movement-queen-bee board position)
+          :beetle      (find-valid-movement-beetle board position)
+          :grasshopper (find-valid-movement-grasshopper board position)
+          :spider      (find-valid-movement-spider board position)
+          :soldier-ant (find-valid-movement-soldier-ant board position)
+          :mosquito    nil
+          :ladybug     (find-valid-movement-ladybug board position)
+          :pillbug     (find-valid-movement-pillbug board position)
+          nil )) 
+        (board/lookup-adjacent-piece-types board position)))) ))
+
+(defn find-valid-special-abilities-mosquito "get special abilities for position by the rules of the mosquito"
+  [board position turn-history]
+    (if (> (board/lookup-piece-stack-height position) 1)
+      nil
+      (set (mapcat identity (map (fn [piece-type] 
+        (case piece-type
+          :pillbug     (find-valid-special-abilities-pillbug board position)
+          nil )) 
+        (board/lookup-adjacent-piece-types board position)))) ))
+
 ; TODO: define a game-state as a schema
 (defn lookup-possible-turns "given a full game state, return all possible next turns"
   [color board hand turn-number turn-history]
-    (let [game-over ]) )
+    (let [game-over (game-over? board)]
+       ))
 

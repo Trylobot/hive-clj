@@ -1,0 +1,84 @@
+{
+  "board": {
+    "pieces": {
+      "0,0": [
+        {
+          "color": "White",
+          "type": "Spider"
+        }
+      ],
+      "2,0": [
+        {
+          "color": "Black",
+          "type": "Spider"
+        }
+      ]
+    }
+  },
+  "hands": {
+    "White": {
+      "Queen Bee": 1,
+      "Beetle": 2,
+      "Grasshopper": 3,
+      "Spider": 1,
+      "Soldier Ant": 3,
+      "Mosquito": 1,
+      "Ladybug": 1,
+      "Pillbug": 1
+    },
+    "Black": {
+      "Queen Bee": 1,
+      "Beetle": 2,
+      "Grasshopper": 3,
+      "Spider": 1,
+      "Soldier Ant": 3,
+      "Mosquito": 1,
+      "Ladybug": 1,
+      "Pillbug": 1
+    }
+  },
+  "player_turn": "White",
+  "turn_number": 2,
+  "game_over": false,
+  "is_draw": false,
+  "creation_parameters": {
+    "use_mosquito": true,
+    "use_ladybug": true,
+    "use_pillbug": true
+  },
+  "turn_history": [
+    {
+      "turn_type": "Placement",
+      "piece_type": "Spider",
+      "destination": "0,0",
+      "response_type": "Choose Turn",
+      "game_id": "v9GJa"
+    },
+    {
+      "turn_type": "Placement",
+      "piece_type": "Spider",
+      "destination": "2,0",
+      "response_type": "Choose Turn",
+      "game_id": "v9GJa"
+    }
+  ],
+  "possible_turns": {
+    "Placement": {
+      "piece_types": [
+        "Queen Bee",
+        "Beetle",
+        "Grasshopper",
+        "Spider",
+        "Soldier Ant",
+        "Mosquito",
+        "Ladybug",
+        "Pillbug"
+      ],
+      "positions": [
+        "-2,0",
+        "-1,1",
+        "-1,-1"
+      ]
+    }
+  }
+}
