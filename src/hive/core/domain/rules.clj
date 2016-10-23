@@ -47,7 +47,7 @@
 
 (defn check-allow-queen-placement ""
   [turn-number]
-     )
+    (> turn-number 1) )
 
 ; Moving
 ;   Once your Queen Bee has been placed (but not before), you can decide whether to use
