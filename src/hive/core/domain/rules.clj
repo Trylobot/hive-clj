@@ -38,7 +38,9 @@
 
 (defn check-force-queen-placement ""
   [color board turn-number]
-     )
+    (let [num-queens (count (board/search-pieces color :queen-bee))
+          is-fourth-turn (or (= 6 turn-number) (= 7 turn-number))] 
+      (and is-fourth-turn (= 0 num-queens)) ))
 
 ; http://boardgamegeek.com/wiki/page/Hive_FAQ
 ;   You cannot place your queen as your first move.
