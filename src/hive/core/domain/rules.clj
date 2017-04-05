@@ -36,7 +36,7 @@
 ;   Your Queen Bee can be placed at any time from your first to your fourth turn. You
 ;   must place your Queen Bee on your fourth turn if you have not placed it before.
 
-(defn check-force-queen-placement ""
+(defn force-queen-placement? "returns true if queen must be placed this turn"
   [color board turn-number]
     (let [num-queens (count (board/search-pieces color :queen-bee))
           is-fourth-turn (or (= 6 turn-number) (= 7 turn-number))] 
@@ -45,7 +45,7 @@
 ; http://boardgamegeek.com/wiki/page/Hive_FAQ
 ;   You cannot place your queen as your first move.
 
-(defn check-allow-queen-placement ""
+(defn allow-queen-placement? "returns true if queen may be placed this turn"
   [turn-number]
     (> turn-number 1) )
 
@@ -59,9 +59,9 @@
 ;   All pieces must always touch at least one other piece. If a piece is the only
 ;   connection between two parts of the Hive, it may not be moved. (See 'One Hive rule')
 
-(defn check-any-movement-allowed ""
+(defn any-movement-allowed? "returns true if any movement is allowed, due to having placed a queen"
   [color board]
-     )
+    (> (count (board/search-pieces color :queen-bee)) 0) )
 
 ; The End of the Game
 ;   The game ends as soon as one Queen Bee is completely surrounded by pieces of any colour.
@@ -91,45 +91,6 @@
           {:game-over true,  :is-draw false, :winner :white}
         :else
           {:game-over false, :is-draw false, :winner nil}) ))
-
-; Unable to Move or Place
-;   If a player can not place a new piece or move an existing piece, the turn passes
-;   to their opponent who then takes their turn again. The game continues in this way
-;   until the player is able to move or place one of their pieces, or until their
-;   Queen Bee is surrounded.
-
-;   http://boardspace.net/english/about_hive.html
-;     Rules Change: at boardspace the "Queen" opening has been forbidden for both black and white.
-;     John Yianni supports this change, which is intended to eliminate the problem of excess draws in "queen opening" games.
-
-(defn find-valid-placement-positions ""
-  [color board turn-number]
-     )
-
-; One Hive rule
-;   The pieces in play must be linked at all times. At no time can you leave a piece
-;   stranded (not joined to the Hive) or separate the Hive in two.
-
-; Freedom to Move
-;   The creatures can only move in a sliding movement. If a piece is surrounded to
-;   the point that it can no longer physically slide out of its position, it may
-;   not be moved. The only exceptions are the Grasshopper (which jumps into or out
-;   of a space), the Beetle and Ladybug (which climb up and down) and the Mosquito
-;   (which can mimic one of the three). Similarly, no piece may move into a space
-;   that it cannot physically slide into.
-
-;   When first introduced to the game, a piece may be placed into a space that is
-;   surrounded as long as it does not violate any of the placing rules, in particular
-;   the rule about pieces not being allowed to touch pieces of the other colour when
-;   they are first placed.
-
-(defn find-valid-movement ""
-  [board position]
-     )
-
-(defn find-valid-special-abilities ""
-  [board position turn-history]
-     )
 
 
 ; Queen Bee
@@ -315,9 +276,54 @@
           nil )) 
         (board/lookup-adjacent-piece-types board position)))) ))
 
+
+; Unable to Move or Place
+;   If a player can not place a new piece or move an existing piece, the turn passes
+;   to their opponent who then takes their turn again. The game continues in this way
+;   until the player is able to move or place one of their pieces, or until their
+;   Queen Bee is surrounded.
+
+;   http://boardspace.net/english/about_hive.html
+;     Rules Change: at boardspace the "Queen" opening has been forbidden for both black and white.
+;     John Yianni supports this change, which is intended to eliminate the problem of excess draws in "queen opening" games.
+
+(defn find-valid-placement-positions "returns the set of valid placement positions for the given color"
+  [color board turn-number]
+    (board/search-free-spaces board (if (> turn-number 1) color nil)) )
+
+; One Hive rule
+;   The pieces in play must be linked at all times. At no time can you leave a piece
+;   stranded (not joined to the Hive) or separate the Hive in two.
+
+; Freedom to Move
+;   The creatures can only move in a sliding movement. If a piece is surrounded to
+;   the point that it can no longer physically slide out of its position, it may
+;   not be moved. The only exceptions are the Grasshopper (which jumps into or out
+;   of a space), the Beetle and Ladybug (which climb up and down) and the Mosquito
+;   (which can mimic one of the three). Similarly, no piece may move into a space
+;   that it cannot physically slide into.
+
+;   When first introduced to the game, a piece may be placed into a space that is
+;   surrounded as long as it does not violate any of the placing rules, in particular
+;   the rule about pieces not being allowed to touch pieces of the other colour when
+;   they are first placed.
+
+(defn find-valid-movement "returns all valid moves for the piece at the given position (if stacked, top of stack)"
+  [board position]
+    (let [one-hive? (board/contiguous? board position)]
+      (if one-hive?
+        (let [piece (board/lookup-piece board position)
+              ])
+        nil) ))
+
+(defn find-valid-special-abilities ""
+  [board position turn-history]
+    nil )
+
+
 ; TODO: define a game-state as a schema
 (defn lookup-possible-turns "given a full game state, return all possible next turns"
   [color board hand turn-number turn-history]
     (let [game-over (game-over? board)]
-       ))
+      nil ))
 
