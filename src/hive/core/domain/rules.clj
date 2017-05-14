@@ -5,6 +5,7 @@
 (require '[hive.core.domain.piece :as piece])
 (require '[hive.core.domain.range :as range])
 (require '[hive.core.domain.board :as board])
+(require '[hive.core.domain.turn :as turn])
 
 ; rules
 ;
@@ -310,20 +311,68 @@
 
 (defn find-valid-movement "returns all valid moves for the piece at the given position (if stacked, top of stack)"
   [board position]
-    (let [one-hive? (board/contiguous? board position)]
-      (if one-hive?
-        (let [piece (board/lookup-piece board position)
-              ])
-        nil) ))
+    (if (board/contiguous? board position)
+      (let [piece-type (:type (board/lookup-piece board position))]
+        (case piece-type
+          :queen-bee   (find-valid-movement-queen-bee board position)
+          :beetle      (find-valid-movement-beetle board position)
+          :grasshopper (find-valid-movement-grasshopper board position)
+          :spider      (find-valid-movement-spider board position)
+          :soldier-ant (find-valid-movement-soldier-ant board position)
+          :mosquito    (find-valid-movement-mosquito board position)
+          :ladybug     (find-valid-movement-ladybug board position)
+          :pillbug     (find-valid-movement-pillbug board position) ))
+      nil) )
 
 (defn find-valid-special-abilities ""
   [board position turn-history]
-    nil )
-
+    (let [piece-type (:type (board/lookup-piece board position))]
+      (case piece-type
+        :queen-bee   nil
+        :beetle      nil
+        :grasshopper nil
+        :spider      nil
+        :soldier-ant nil
+        :mosquito    (find-valid-special-abilities-mosquito board position turn-history)
+        :ladybug     nil
+        :pillbug     (find-valid-special-abilities-pillbug board position turn-history) )) )
 
 ; TODO: define a game-state as a schema
 (defn lookup-possible-turns "given a full game state, return all possible next turns"
   [color board hand turn-number turn-history]
-    (let [game-over (game-over? board)]
-      nil ))
+    (if (game-over? board)
+      nil
+      (let [last-turn (last turn-history)
+            owned-piece-positions (board/search-top-pieces board color nil)
+            possible-placement-positions (find-valid-placement-positions color board turn-number)
+            possible-placement-piece-types 
+              (if (force-queen-placement? color board turn-number)
+                #{:queen-bee}
+                (if (allow-queen-placement? turn-number)
+                  (set (keys hand))
+                  (set (remove #{:queen-bee} (keys hand))) ))
+            possible-piece-actions
+              (if (any-movement-allowed? color board)
+                (filter #(second %) ; toss out any positions mapped to falsey values
+                  (zipmap owned-piece-positions 
+                    (map 
+                      (fn [position] 
+                        (if (and (= :special-ability (:turn-type last-turn))
+                                 (= :pillbug         (:type (board/lookup-piece board (:ability-user last-turn))))
+                                 (= position         (:destination last-turn) ))
+                          ; piece is not eligible for movement because it is stunned by pillbug's special ability
+                          nil
+                          ; piece at <position> has potential movement or special abilities of its own
+                          { :movement          (find-valid-movement board position)
+                            :special-abilities (find-valid-special-abilities board position turn-history) } ))
+                      owned-piece-positions) ))
+                nil )
+            possible-forfeit
+              (and (empty? possible-placement-positions)
+                   (empty? possible-placement-piece-types)
+                   (empty? possible-piece-actions)) ]
+        { :placement-positions possible-placement-positions
+          :placement-piece-types possible-placement-piece-types
+          :existing-piece-actions possible-piece-actions
+          :must-only-forfeit possible-forfeit } )) )
 
