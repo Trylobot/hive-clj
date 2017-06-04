@@ -62,7 +62,7 @@
 
 (defn any-movement-allowed? "returns true if any movement is allowed, due to having placed a queen"
   [color board]
-    (> (count (board/search-pieces color :queen-bee)) 0) )
+    (> (count (board/search-pieces board color :queen-bee)) 0) )
 
 ; The End of the Game
 ;   The game ends as soon as one Queen Bee is completely surrounded by pieces of any colour.

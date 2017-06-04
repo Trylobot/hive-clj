@@ -17,7 +17,7 @@
 
 )(deftest force-queen-placement?-test
 
-  (testing "force-queen-placement?, queen bee placement not yet required"
+  (testing "force-queen-placement?, queen bee placement not yet required (not fourth turn)"
     (is (=
       false
       (rules/force-queen-placement? 
@@ -29,7 +29,7 @@
           (board/place-piece (piece/create :black :spider) (position/create 1 1)) )
         4) )))
 
-  (testing "force-queen-placement?, queen bee must now be placed"
+  (testing "force-queen-placement?, queen bee must now be placed (is fourth turn)"
     (is (=
       true
       (rules/force-queen-placement? 
@@ -61,14 +61,34 @@
 
 )(deftest allow-queen-placement?-test 
   
-  (testing "allow-queen-placement?, queen placement NOT allowed"
+  (testing "allow-queen-placement?, queen placement NOT allowed (first turn)"
     (is (=
       false
       (and (rules/allow-queen-placement? 0) (rules/allow-queen-placement? 1)) )))
 
-  (testing "allow-queen-placement?, queen placement ALLOWED"
+  (testing "allow-queen-placement?, queen placement ALLOWED (not first turn)"
     (is (=
       true
       (and (rules/allow-queen-placement? 2) (rules/allow-queen-placement? 3)) )))
+
+)(deftest any-movement-allowed?-test
+
+  (testing "any-movement-allowed?, NO movement is allowed (no queen placed)"
+    (is (=
+      false
+      (rules/any-movement-allowed?
+        :white
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :spider}]
+          {:row -2, :col 0} [{:color :black, :type :spider}] }} ) )))
+
+  (testing "any-movement-allowed?, movement IS allowed (queen placed)"
+    (is (=
+      true
+      (rules/any-movement-allowed?
+        :white
+        {:pieces {
+          {:row -4, :col 0} [{:color :white, :type :queen-bee}]
+          {:row -2, :col 0} [{:color :black, :type :queen-bee}] }} ) )))
 
 )
