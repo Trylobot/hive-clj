@@ -59,18 +59,19 @@
       (->> board :pieces vals (map filter-pieces) (map count) (reduce +)) )))
 
 (defn search-pieces "search all pieces on the board, filtering by color and/or type"
-  [{pieces :pieces} color-filter type-filter]
-    (->> pieces
-      (map (fn [board-position]
-        (let [position (first board-position)
-              stack (second board-position)]
-          (map-indexed (fn [index piece]
-            { :position position,
-              :layer index, 
-              :piece piece })
-            stack) )))
-      first
-      (filter #(piece/like? (:piece %) color-filter type-filter)) ))
+  [board color-filter type-filter]
+    (let [pieces (:pieces board)]
+      (->> pieces
+        (map (fn [board-position]
+          (let [position (first board-position)
+                stack (second board-position)]
+            (map-indexed (fn [index piece]
+              { :position position,
+                :layer index, 
+                :piece piece })
+              stack) )))
+        first
+        (filter #(piece/like? (:piece %) color-filter type-filter)) )))
 
 (defn search-top-pieces "search only the top pieces of each stack on the board, filtering by color and/or type"
   [board color-filter type-filter]

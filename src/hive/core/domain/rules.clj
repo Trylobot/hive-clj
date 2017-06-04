@@ -39,7 +39,7 @@
 
 (defn force-queen-placement? "returns true if queen must be placed this turn"
   [color board turn-number]
-    (let [num-queens (count (board/search-pieces color :queen-bee))
+    (let [num-queens (count (board/search-pieces board color :queen-bee))
           is-fourth-turn (or (= 6 turn-number) (= 7 turn-number))] 
       (and is-fourth-turn (= 0 num-queens)) ))
 
