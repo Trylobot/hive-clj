@@ -5,17 +5,7 @@
 (require '[hive.core.domain.board :as board])
 (require '[hive.core.domain.rules :as rules])
 
-(deftest game-over?-test
-  
-  (testing "game-over?, no queens"
-    (is (= 
-      {:game-over false, :is-draw false, :winner nil}
-      (rules/game-over?
-        {:pieces {
-          {:row 0, :col 0} [{:color :white, :type :spider}]
-          {:row 2, :col 0} [{:color :black, :type :spider}] }}) )))
-
-)(deftest force-queen-placement?-test
+(deftest force-queen-placement?-test
 
   (testing "force-queen-placement?, queen bee placement not yet required (not fourth turn)"
     (is (=
@@ -90,5 +80,42 @@
         {:pieces {
           {:row -4, :col 0} [{:color :white, :type :queen-bee}]
           {:row -2, :col 0} [{:color :black, :type :queen-bee}] }} ) )))
+
+)(deftest game-over?-test
+  
+  (testing "game-over?, no queens placed"
+    (is (= 
+      {:game-over false, :is-draw false, :winner nil}
+      (rules/game-over?
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :spider}]
+          {:row 2, :col 0} [{:color :black, :type :spider}] }}) )))
+
+  (testing "game-over?, one queen nearly surrounded (5/6 sides)"
+    (is (= 
+      {:game-over false, :is-draw false, :winner nil}
+      (rules/game-over?
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+          {:row -2, :col 0} [{:color :black, :type :queen-bee}]
+          {:row -1, :col 1} [{:color :white, :type :spider}]
+          {:row 1, :col 1} [{:color :black, :type :spider}]
+          {:row 2, :col 0} [{:color :white, :type :spider}]
+          {:row 1, :col -1} [{:color :black, :type :spider}] }}) )))
+
+  (testing "game-over?, one queen completely surrounded (all sides)"
+    (is (= 
+      {:game-over true, :is-draw false, :winner :black}
+      (rules/game-over?
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :queen-bee}]
+          {:row -2, :col 0} [{:color :black, :type :queen-bee}]
+          {:row -1, :col 1} [{:color :white, :type :spider}]
+          {:row 1, :col 1} [{:color :black, :type :spider}]
+          {:row 2, :col 0} [{:color :white, :type :spider}]
+          {:row 1, :col -1} [{:color :black, :type :spider}]
+          {:row -1, :col -1} [{:color :white, :type :spider}] }}) )))
+
+
 
 )
