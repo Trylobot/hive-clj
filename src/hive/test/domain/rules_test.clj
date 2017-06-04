@@ -59,4 +59,16 @@
           {:row 2, :col 0}   [{:color :black, :type :queen-bee}] }}
         8) )))
 
+)(deftest allow-queen-placement?-test 
+  
+  (testing "allow-queen-placement?, queen placement NOT allowed"
+    (is (=
+      false
+      (and (rules/allow-queen-placement? 0) (rules/allow-queen-placement? 1)) )))
+
+  (testing "allow-queen-placement?, queen placement ALLOWED"
+    (is (=
+      true
+      (and (rules/allow-queen-placement? 2) (rules/allow-queen-placement? 3)) )))
+
 )
