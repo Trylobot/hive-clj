@@ -48,15 +48,15 @@
       false
       (rules/force-queen-placement? 
         :white
-        (-> board/create
-          (board/place-piece (piece/create :white :spider) (position/create 0 0))
-          (board/place-piece (piece/create :black :spider) (position/create -2 0))
-          (board/place-piece (piece/create :white :beetle) (position/create -3 1))
-          (board/place-piece (piece/create :black :spider) (position/create 1 1))
-          (board/place-piece (piece/create :white :soldier-ant) (position/create 1 -1))
-          (board/place-piece (piece/create :black :soldier-ant) (position/create -3 -1))
-          (board/place-piece (piece/create :white :queen-bee) (position/create -4 0))
-          (board/place-piece (piece/create :black :queen-bee) (position/create 2 0)) )
+        {:pieces {
+          {:row 0, :col 0}   [{:color :white, :type :spider}]
+          {:row -2, :col 0}  [{:color :black, :type :spider}]
+          {:row -3, :col 1}  [{:color :white, :type :beetle}]
+          {:row 1, :col 1}   [{:color :black, :type :spider}]
+          {:row 1, :col -1}  [{:color :white, :type :soldier-ant}]
+          {:row -3, :col -1} [{:color :black, :type :soldier-ant}]
+          {:row -4, :col 0}  [{:color :white, :type :queen-bee}]
+          {:row 2, :col 0}   [{:color :black, :type :queen-bee}] }}
         8) )))
 
 )
