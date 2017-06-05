@@ -137,6 +137,24 @@
         {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]}}
         nil :beetle) )))
 
+  (testing "search-pieces, zero-queens bug found while testing rules/game-over?"
+    (is (=
+      2
+      (count (board/search-pieces 
+        {:pieces {
+          {:col -1 :row -1} [{:color :black :type :spider}]
+          {:col -1 :row 1} [{:color :black :type :spider}]
+          {:col 0 :row -2} [{:color :black :type :spider}]
+          {:col 0 :row 0} [{:color :white :type :queen-bee}]
+          {:col 0 :row 2} [{:color :black :type :spider}]
+          {:col 1 :row -3} [{:color :black :type :spider}]
+          {:col 1 :row -1} [{:color :black :type :queen-bee}]
+          {:col 1 :row 1} [{:color :black :type :spider}]
+          {:col 2 :row -2} [{:color :black :type :spider}]
+          {:col 2 :row 0} [{:color :black :type :spider}] }}
+        nil
+        :queen-bee)) )))
+
 )(deftest search-top-pieces-test
 
   (testing "search-top-pieces, unfiltered, board with two pieces"

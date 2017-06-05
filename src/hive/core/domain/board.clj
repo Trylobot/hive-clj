@@ -62,15 +62,13 @@
   [board color-filter type-filter]
     (let [pieces (:pieces board)]
       (->> pieces
-        (map (fn [board-position]
+        (mapcat (fn [board-position]
           (let [position (first board-position)
                 stack (second board-position)]
-            (map-indexed (fn [index piece]
-              { :position position,
-                :layer index, 
-                :piece piece })
-              stack) )))
-        first
+            (map-indexed 
+              (fn [index piece]
+                {:position position, :layer index, :piece piece })
+              stack)) ))
         (filter #(piece/like? (:piece %) color-filter type-filter)) )))
 
 (defn search-top-pieces "search only the top pieces of each stack on the board, filtering by color and/or type"

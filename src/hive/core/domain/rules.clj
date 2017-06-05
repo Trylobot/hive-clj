@@ -72,17 +72,17 @@
 ;   they are forced to move the same two pieces over and over again, without any possibility
 ;   of the stalemate being resolved.
 
-(defn game-over? "describes precisely whether the given board represents a finished game"
+(defn game-over? "describes which end state, if any, has been reached"
   [board]
-    (let [directions (count position/direction-vectors)
+    (let [num-directions (count position/direction-vectors)
           queens (map
-            (fn [queen] 
-              (let [occupied-adjacencies (board/lookup-occupied-adjacencies board (:position queen))]
-                (assoc queen :surrounded (= directions (count occupied-adjacencies))) ))
+            (fn [piece] 
+              (let [occupied-adjacencies (board/lookup-occupied-adjacencies board (:position piece))]
+                (assoc piece :surrounded (= num-directions (count occupied-adjacencies))) ))
             (board/search-pieces board nil :queen-bee))
           color-test (fn [color] #(= color (:color (:piece %))))
-          white (some (color-test :white) queens)
-          black (some (color-test :black) queens)]
+          white (first (filter (color-test :white) queens))
+          black (first (filter (color-test :black) queens))]
       (cond
         (and (:surrounded white) (:surrounded black))
           {:game-over true,  :is-draw true,  :winner nil} 
