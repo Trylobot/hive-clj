@@ -147,6 +147,62 @@
           {:row 0, :col 2} [{:color :black, :type :spider}]
           {:row -1, :col 1} [{:color :black, :type :queen-bee}] }}) )))
 
+)(deftest find-valid-placement-positions-test
+
+  (testing "find-valid-placement-positions for white on player's second turn"
+    (is (=
+      #{ {:row -2, :col  0}
+         {:row -1, :col  1}
+         {:row -1, :col -1} }
+      (rules/find-valid-placement-positions
+        :white
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :spider}]
+          {:row 2, :col 0} [{:color :black, :type :spider}] }}
+        2) )))
+
+  (testing "find-valid-placement-positions for black on player's second turn"
+    (is (=
+      #{ {:row  3, :col  1}
+         {:row  4, :col  0}
+         {:row  3, :col -1} }
+      (rules/find-valid-placement-positions
+        :black
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :spider}]
+          {:row 2, :col 0} [{:color :black, :type :spider}] }}
+        3) )))
+
+  (testing "find-valid-placement-positions when white has nowhere to place anything (no white pieces anywhere)" 
+    (is (=
+      #{}
+      (rules/find-valid-placement-positions
+        :white
+        {:pieces {
+          {:row 0, :col 0} [{:color :black, :type :spider}]
+          {:row 2, :col 0} [{:color :black, :type :spider}] }}
+        3) )))
   
+  (testing "find-valid-placement-positions when white has nowhere to place anything (white piece is covered by a beetle)" 
+    (is (=
+      #{}
+      (rules/find-valid-placement-positions
+        :white
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :spider}, {:color :black, :type :beetle}]
+          {:row 2, :col 0} [{:color :black, :type :spider}] }}
+        3) )))
+
+  (testing "find-valid-placement-positions when white has only a single space available" 
+    (is (=
+      #{ {:row -2, :col 0} }
+      (rules/find-valid-placement-positions
+        :white
+        {:pieces {
+          {:row 0, :col 0} [{:color :white, :type :spider}]
+          {:row 2, :col 0} [{:color :black, :type :spider}]
+          {:row 1, :col 1} [{:color :black, :type :spider}]
+          {:row 1, :col -1} [{:color :black, :type :spider}] }}
+        5) )))
 
 )
