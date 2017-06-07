@@ -224,7 +224,7 @@
                   (cond 
                     (== (:height adjacency) 0) ; empty space
                       (update-in result [:free] conj (:position adjacency))
-                    (and (== (:height adjacency) 1) (board/contiguous? (:position adjacency))) ; single piece
+                    (and (== (:height adjacency) 1) (board/contiguous? (board/remove-piece board (:position adjacency)))) ; single piece
                       (update-in result [:occupied] conj (:position adjacency))
                     :else
                       result)
@@ -311,7 +311,7 @@
 
 (defn find-valid-movement "returns all valid moves for the piece at the given position (if stacked, top of stack)"
   [board position]
-    (if (board/contiguous? board position)
+    (if (board/contiguous? (board/remove-piece board position))
       (let [piece-type (:type (board/lookup-piece board position))]
         (case piece-type
           :queen-bee   (find-valid-movement-queen-bee board position)

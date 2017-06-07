@@ -4,16 +4,33 @@
 (require '[hive.core.domain.piece :as piece])
 (require '[hive.core.domain.board :as board])
 
-(deftest place-piece-test
+(deftest create-test
+
+  (testing "create, empty"
+    (is (=
+      {:pieces {}}
+      (board/create) )))
+
+  (testing "create, a couple of random pieces, some stacked"
+    (is (=
+      {:pieces {
+        {:row 0, :col 0} [{:color :white, :type :queen-bee}, {:color :black, :type :beetle}]
+        {:row 1, :col 1} [{:color :black, :type :grasshopper}] }}
+      (board/create [
+        [0 0 :white :queen-bee]
+        [0 0 :black :beetle]
+        [1 1 :black :grasshopper] ]) )))
+
+)(deftest place-piece-test
   
   ; place piece
   (testing "place-piece, empty board"
     (is (= 
-      {:pieces {{:row 0, :col 0} [{:color :white, :type :queen-bee}]}}
-      (board/place-piece 
-        board/create 
+      "{:pieces {{:row 0, :col 0} [{:color :white, :type :queen-bee}]}}"
+      (str (board/place-piece 
+        (board/create)
         (piece/create :white :queen-bee) 
-        (position/create 0 0)) )))
+        (position/create 0 0))) )))
 
   (testing "place-piece, board w/ single piece"
     (is (= 
@@ -25,9 +42,9 @@
 
   (testing "place-piece, empty board, nil piece"
     (is (=
-      board/create
+      (board/create)
       (board/place-piece
-        board/create
+        (board/create)
         nil
         (position/create 0 0)) )))
 
@@ -36,14 +53,14 @@
   ; remove piece
   (testing "remove-piece, empty board"
     (is (= 
-      board/create
+      (board/create)
       (board/remove-piece
-        board/create
+        (board/create)
         (position/create 0 0)) )))
 
   (testing "remove-piece, board w/ single piece"
     (is (= 
-      board/create
+      (board/create)
       (board/remove-piece 
         {:pieces {{:row 0, :col 0} [{:color :white, :type :queen-bee}]}} 
         (position/create 0 0)) )))
@@ -60,9 +77,9 @@
   ; move piece
   (testing "move-piece, empty board"
     (is (=
-      board/create
+      (board/create)
       (board/move-piece
-        board/create
+        (board/create)
         (position/create 0 0)
         (position/create -2 0)) )))
 
@@ -80,7 +97,7 @@
   (testing "count-pieces, empty board"
     (is (=
       0
-      (board/count-pieces board/create) )) )
+      (board/count-pieces (board/create)) )) )
 
   (testing "count-pieces, board with one piece"
     (is (=

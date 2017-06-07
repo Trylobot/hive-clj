@@ -12,7 +12,7 @@
       false
       (rules/force-queen-placement? 
         :white
-        (-> board/create
+        (-> (board/create)
           (board/place-piece (piece/create :white :spider) (position/create 0 0))
           (board/place-piece (piece/create :black :spider) (position/create -2 0))
           (board/place-piece (piece/create :white :beetle) (position/create -3 1))
@@ -24,7 +24,7 @@
       true
       (rules/force-queen-placement? 
         :white
-        (-> board/create
+        (-> (board/create)
           (board/place-piece (piece/create :white :spider) (position/create 0 0))
           (board/place-piece (piece/create :black :spider) (position/create -2 0))
           (board/place-piece (piece/create :white :beetle) (position/create -3 1))
@@ -204,5 +204,15 @@
           {:row 1, :col 1} [{:color :black, :type :spider}]
           {:row 1, :col -1} [{:color :black, :type :spider}] }}
         5) )))
+
+)(deftest find-valid-movement-test
+
+  (testing "find-valid-movement, no valid movement (island)"
+    (is (=
+      0
+      (count (rules/find-valid-movement 
+        (board/create [
+          [0 0 :white :soldier-ant]])
+        (position/create 0 0) )) )))
 
 )

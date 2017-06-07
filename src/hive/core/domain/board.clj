@@ -12,20 +12,36 @@
 (def origin "origin of the board addressing system — see doc/grid.png"
   position/origin)
 
-(def create "initialize an empty board with no pieces"
-  {:pieces {}})
-
-(defn purge-empties "remove empty piece-stacks from board"
-  [pieces]
-    (into {} (filter #(not (empty? (second %))) pieces)) )
-
 (defn place-piece "place a piece on the top of a stack at position"
   [board piece position]
     (cond
       (and board piece position)
-        (update-in board [:pieces position] conj piece)
+        (update-in 
+          board [:pieces position]
+          (fn [stack piece]
+            (if stack 
+              (conj stack piece) 
+              [piece] ))
+          piece)
       :else
         board) )
+
+(defn create "initialize a board (optionally, with some pieces)"
+  ([] 
+    {:pieces {}})
+  ([piece-data]
+    (reduce 
+      (fn [board [row col color type]]
+        (place-piece
+          board
+          (piece/create color type)
+          (position/create row col) ))
+      {:pieces {}}
+      piece-data)))
+
+(defn purge-empties "remove empty piece-stacks from board"
+  [pieces]
+    (into {} (filter #(not (empty? (second %))) pieces)) )
 
 (defn remove-piece "remove the piece at the top of the stack at position"
   [board position]
@@ -33,7 +49,7 @@
       (and board position)
         (-> board
           (update-in [:pieces position] pop)
-          (update-in [:pieces] purge-empties) )
+          (update-in [:pieces] purge-empties) ) ; this is an inefficency
       :else
         board) )
 
